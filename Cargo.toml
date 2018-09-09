@@ -1,0 +1,23 @@
+[package]
+name = "miniserde"
+version = "0.0.0"
+authors = ["David Tolnay <dtolnay@gmail.com>"]
+license = "MIT OR Apache-2.0"
+description = "Data structure serialization library with several opposite design goals from Serde."
+repository = "https://github.com/dtolnay/miniserde"
+documentation = "https://docs.rs/miniserde"
+readme = "README.md"
+publish = false
+
+[dependencies]
+itoa = "0.4"
+mini-internal = { version = "0.0", path = "derive" }
+ryu = "0.2"
+
+[dev-dependencies]
+serde = "1.0"
+serde_derive = "1.0"
+serde_json = "1.0"
+
+[workspace]
+members = ["derive"]

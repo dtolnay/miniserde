@@ -1,0 +1,7 @@
+language: rust
+
+rust:
+  - nightly
+  - stable
+  - beta
+  - 1.26.0
