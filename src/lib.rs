@@ -138,6 +138,7 @@
 #[allow(unused_imports)]
 #[macro_use]
 extern crate mini_internal;
+#[doc(hidden)]
 pub use mini_internal::*;
 
 extern crate itoa;
