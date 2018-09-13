@@ -15,7 +15,7 @@ qualified below.
 
 ```toml
 [dependencies]
-miniserde = "0.0"
+miniserde = "0.1"
 ```
 
 Version requirement: rustc 1.26+
