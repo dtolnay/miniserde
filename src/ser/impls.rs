@@ -90,6 +90,12 @@ impl<T: Serialize> Serialize for Option<T> {
     }
 }
 
+impl<'a, T: ?Sized + ToOwned + Serialize> Serialize for Cow<'a, T> {
+    fn begin(&self) -> Fragment {
+        (**self).begin()
+    }
+}
+
 impl<A: Serialize, B: Serialize> Serialize for (A, B) {
     fn begin(&self) -> Fragment {
         struct TupleStream<'a> {
