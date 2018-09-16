@@ -118,6 +118,12 @@ impl<A: Serialize, B: Serialize> Serialize for (A, B) {
     }
 }
 
+impl<T: Serialize> Serialize for [T] {
+    fn begin(&self) -> Fragment {
+        private::stream_slice(self)
+    }
+}
+
 impl<T: Serialize> Serialize for Vec<T> {
     fn begin(&self) -> Fragment {
         private::stream_slice(self)
