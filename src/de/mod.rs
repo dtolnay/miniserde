@@ -203,7 +203,7 @@ use error::{Error, Result};
 
 /// Trait for data structures that can be deserialized from a JSON string.
 ///
-/// [Refer to the module documentation for examples.](index.html)
+/// [Refer to the module documentation for examples.][::de]
 pub trait Deserialize: Sized {
     /// The only correct implementation of this method is:
     ///
@@ -238,7 +238,7 @@ pub trait Deserialize: Sized {
 
 /// Trait that can write data into an output place.
 ///
-/// [Refer to the module documentation for examples.](index.html)
+/// [Refer to the module documentation for examples.][::de]
 pub trait Visitor {
     fn null(&mut self) -> Result<()> {
         Err(Error)
@@ -280,7 +280,7 @@ pub trait Visitor {
 
 /// Trait that can hand out places to write sequence elements.
 ///
-/// [Refer to the module documentation for examples.](index.html)
+/// [Refer to the module documentation for examples.][::de]
 pub trait Seq {
     fn element(&mut self) -> Result<&mut Visitor>;
     fn finish(&mut self) -> Result<()>;
@@ -288,7 +288,7 @@ pub trait Seq {
 
 /// Trait that can hand out places to write values of a map.
 ///
-/// [Refer to the module documentation for examples.](index.html)
+/// [Refer to the module documentation for examples.][::de]
 pub trait Map {
     fn key(&mut self, k: &str) -> Result<&mut Visitor>;
     fn finish(&mut self) -> Result<()>;

@@ -92,7 +92,7 @@ use std::borrow::Cow;
 
 /// One unit of output produced during serialization.
 ///
-/// [Refer to the module documentation for examples.](index.html)
+/// [Refer to the module documentation for examples.][::ser]
 pub enum Fragment<'a> {
     Null,
     Bool(bool),
@@ -106,21 +106,21 @@ pub enum Fragment<'a> {
 
 /// Trait for data structures that can be serialized to a JSON string.
 ///
-/// [Refer to the module documentation for examples.](index.html)
+/// [Refer to the module documentation for examples.][::ser]
 pub trait Serialize {
     fn begin(&self) -> Fragment;
 }
 
 /// Trait that can iterate elements of a sequence.
 ///
-/// [Refer to the module documentation for examples.](index.html)
+/// [Refer to the module documentation for examples.][::ser]
 pub trait Seq {
     fn next(&mut self) -> Option<&Serialize>;
 }
 
 /// Trait that can iterate key-value entries of a map or struct.
 ///
-/// [Refer to the module documentation for examples.](index.html)
+/// [Refer to the module documentation for examples.][::ser]
 pub trait Map {
     fn next(&mut self) -> Option<(Cow<str>, &Serialize)>;
 }
