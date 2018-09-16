@@ -1,5 +1,6 @@
 use std::borrow::Cow;
-use std::collections::{btree_map, BTreeMap};
+use std::collections::{btree_map, hash_map, BTreeMap, HashMap};
+use std::hash::{BuildHasher, Hash};
 use std::slice;
 
 use private;
@@ -133,6 +134,26 @@ impl<T: Serialize> Serialize for [T] {
 impl<T: Serialize> Serialize for Vec<T> {
     fn begin(&self) -> Fragment {
         private::stream_slice(self)
+    }
+}
+
+impl<K, V, H> Serialize for HashMap<K, V, H>
+where
+    K: Hash + Eq + ToString,
+    V: Serialize,
+    H: BuildHasher,
+{
+    fn begin(&self) -> Fragment {
+        struct HashMapStream<'a, K: 'a, V: 'a>(hash_map::Iter<'a, K, V>);
+
+        impl<'a, K: ToString, V: Serialize> Map for HashMapStream<'a, K, V> {
+            fn next(&mut self) -> Option<(Cow<str>, &Serialize)> {
+                let (k, v) = self.0.next()?;
+                Some((Cow::Owned(k.to_string()), v as &Serialize))
+            }
+        }
+
+        Fragment::Map(Box::new(HashMapStream(self.iter())))
     }
 }
 

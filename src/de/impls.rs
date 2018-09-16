@@ -1,4 +1,5 @@
-use std::collections::BTreeMap;
+use std::collections::{BTreeMap, HashMap};
+use std::hash::{BuildHasher, Hash};
 use std::mem;
 use std::str::FromStr;
 
@@ -361,6 +362,71 @@ impl<T: Deserialize> Deserialize for Vec<T> {
             fn finish(&mut self) -> Result<()> {
                 self.shift();
                 *self.out = Some(mem::replace(&mut self.vec, Vec::new()));
+                Ok(())
+            }
+        }
+
+        Place::new(out)
+    }
+}
+
+impl<K, V, H> Deserialize for HashMap<K, V, H>
+where
+    K: FromStr + Hash + Eq,
+    V: Deserialize,
+    H: BuildHasher + Default,
+{
+    fn begin(out: &mut Option<Self>) -> &mut Visitor {
+        impl<K, V, H> Visitor for Place<HashMap<K, V, H>>
+        where
+            K: FromStr + Hash + Eq,
+            V: Deserialize,
+            H: BuildHasher + Default,
+        {
+            fn map(&mut self) -> Result<Box<Map + '_>> {
+                Ok(Box::new(MapBuilder {
+                    out: &mut self.out,
+                    map: HashMap::with_hasher(H::default()),
+                    key: None,
+                    value: None,
+                }))
+            }
+        }
+
+        struct MapBuilder<'a, K: 'a, V: 'a, H: 'a> {
+            out: &'a mut Option<HashMap<K, V, H>>,
+            map: HashMap<K, V, H>,
+            key: Option<K>,
+            value: Option<V>,
+        }
+
+        impl<'a, K: Hash + Eq, V, H: BuildHasher> MapBuilder<'a, K, V, H> {
+            fn shift(&mut self) {
+                if let (Some(k), Some(v)) = (self.key.take(), self.value.take()) {
+                    self.map.insert(k, v);
+                }
+            }
+        }
+
+        impl<'a, K, V, H> Map for MapBuilder<'a, K, V, H>
+        where
+            K: FromStr + Hash + Eq,
+            V: Deserialize,
+            H: BuildHasher + Default,
+        {
+            fn key(&mut self, k: &str) -> Result<&mut Visitor> {
+                self.shift();
+                self.key = Some(match K::from_str(k) {
+                    Ok(key) => key,
+                    Err(_) => return Err(Error),
+                });
+                Ok(Deserialize::begin(&mut self.value))
+            }
+
+            fn finish(&mut self) -> Result<()> {
+                self.shift();
+                let substitute = HashMap::with_hasher(H::default());
+                *self.out = Some(mem::replace(&mut self.map, substitute));
                 Ok(())
             }
         }
