@@ -50,7 +50,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
             }
 
             impl #impl_generics miniserde::de::Visitor for __Visitor #ty_generics #bounded_where_clause {
-                fn map(&mut self) -> miniserde::Result<miniserde::export::Box<miniserde::de::Map + '_>> {
+                fn map(&mut self) -> miniserde::Result<miniserde::export::Box<dyn miniserde::de::Map + '_>> {
                     Ok(Box::new(__State {
                         #(
                             #fieldname: miniserde::Deserialize::default(),

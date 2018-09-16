@@ -76,7 +76,7 @@
 //! struct MyVec<T>(Vec<T>);
 //!
 //! impl<T: Deserialize> Visitor for Place<MyVec<T>> {
-//!     fn seq(&mut self) -> Result<Box<Seq + '_>> {
+//!     fn seq(&mut self) -> Result<Box<dyn Seq + '_>> {
 //!         Ok(Box::new(VecBuilder {
 //!             out: &mut self.out,
 //!             vec: Vec::new(),
@@ -144,7 +144,7 @@
 //! }
 //!
 //! impl Visitor for Place<Demo> {
-//!     fn map(&mut self) -> Result<Box<Map + '_>> {
+//!     fn map(&mut self) -> Result<Box<dyn Map + '_>> {
 //!         // Like for sequences, we produce a builder that can hand out places
 //!         // to write one struct field at a time.
 //!         Ok(Box::new(DemoBuilder {
@@ -269,11 +269,11 @@ pub trait Visitor {
         Err(Error)
     }
 
-    fn seq(&mut self) -> Result<Box<Seq + '_>> {
+    fn seq(&mut self) -> Result<Box<dyn Seq + '_>> {
         Err(Error)
     }
 
-    fn map(&mut self) -> Result<Box<Map + '_>> {
+    fn map(&mut self) -> Result<Box<dyn Map + '_>> {
         Err(Error)
     }
 }

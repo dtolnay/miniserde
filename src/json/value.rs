@@ -89,7 +89,7 @@ impl Deserialize for Value {
                 Ok(())
             }
 
-            fn seq(&mut self) -> Result<Box<Seq + '_>> {
+            fn seq(&mut self) -> Result<Box<dyn Seq + '_>> {
                 Ok(Box::new(ArrayBuilder {
                     out: &mut self.out,
                     array: Array::new(),
@@ -97,7 +97,7 @@ impl Deserialize for Value {
                 }))
             }
 
-            fn map(&mut self) -> Result<Box<Map + '_>> {
+            fn map(&mut self) -> Result<Box<dyn Map + '_>> {
                 Ok(Box::new(ObjectBuilder {
                     out: &mut self.out,
                     object: Object::new(),

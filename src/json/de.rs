@@ -43,8 +43,8 @@ struct Deserializer<'a, 'b> {
 }
 
 enum Layer<'a> {
-    Seq(Box<Seq + 'a>),
-    Map(Box<Map + 'a>),
+    Seq(Box<dyn Seq + 'a>),
+    Map(Box<dyn Map + 'a>),
 }
 
 impl<'a, 'b> Drop for Deserializer<'a, 'b> {
@@ -91,11 +91,11 @@ fn from_str_impl(j: &str, mut visitor: &mut Visitor) -> Result<()> {
                 None
             }
             SeqStart => {
-                let seq = careful!(visitor.seq()? as Box<Seq>);
+                let seq = careful!(visitor.seq()? as Box<dyn Seq>);
                 Some(Layer::Seq(seq))
             }
             MapStart => {
-                let map = careful!(visitor.map()? as Box<Map>);
+                let map = careful!(visitor.map()? as Box<dyn Map>);
                 Some(Layer::Map(map))
             }
         };

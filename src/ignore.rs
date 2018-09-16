@@ -34,11 +34,11 @@ impl Visitor for Ignore {
         Ok(())
     }
 
-    fn seq(&mut self) -> Result<Box<Seq + '_>> {
+    fn seq(&mut self) -> Result<Box<dyn Seq + '_>> {
         Ok(Box::new(Ignore))
     }
 
-    fn map(&mut self) -> Result<Box<Map + '_>> {
+    fn map(&mut self) -> Result<Box<dyn Map + '_>> {
         Ok(Box::new(Ignore))
     }
 }
