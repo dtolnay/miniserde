@@ -30,6 +30,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
     let bounded_where_clause = bound::where_clause_with_bound(&input.generics, bound);
 
     TokenStream::from(quote! {
+        #[allow(non_upper_case_globals)]
         const #dummy: () = {
             extern crate miniserde;
 
