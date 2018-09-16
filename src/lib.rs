@@ -128,7 +128,7 @@
 //! restricts the kinds of on-the-fly manipulation that are possible in custom
 //! impls. If you need any of this, use Serde -- it's a great library.
 
-#![doc(html_root_url = "https://docs.rs/miniserde/0.1.1")]
+#![doc(html_root_url = "https://docs.rs/miniserde/0.1.2")]
 #![cfg_attr(feature = "cargo-clippy", allow(renamed_and_removed_lints))]
 #![cfg_attr(
     feature = "cargo-clippy",
