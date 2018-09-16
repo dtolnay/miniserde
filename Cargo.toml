@@ -9,7 +9,7 @@ documentation = "https://docs.rs/miniserde"
 readme = "README.md"
 
 [dependencies]
-itoa = "0.4"
+itoa = "0.4.3"
 mini-internal = { version = "0.1", path = "derive" }
 ryu = "0.2"
 
