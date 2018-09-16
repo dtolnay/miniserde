@@ -13,3 +13,9 @@ matrix:
       script:
         - cargo update -Z minimal-versions
         - cargo check
+    - rust: nightly
+      env: CLIPPY
+      script: |
+          if rustup component add clippy-preview; then
+              cargo clippy -- -Dclippy
+          fi
