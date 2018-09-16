@@ -172,7 +172,7 @@ impl<T: Deserialize> Deserialize for Box<T> {
                 Ok(())
             }
 
-            fn seq(&mut self) -> Result<Box<Seq + '_>> {
+            fn seq(&mut self) -> Result<Box<dyn Seq + '_>> {
                 let mut value = Box::new(None);
                 let ptr = careful!(&mut *value as &mut Option<T>);
                 Ok(Box::new(BoxSeq {
@@ -182,7 +182,7 @@ impl<T: Deserialize> Deserialize for Box<T> {
                 }))
             }
 
-            fn map(&mut self) -> Result<Box<Map + '_>> {
+            fn map(&mut self) -> Result<Box<dyn Map + '_>> {
                 let mut value = Box::new(None);
                 let ptr = careful!(&mut *value as &mut Option<T>);
                 Ok(Box::new(BoxMap {
@@ -196,7 +196,7 @@ impl<T: Deserialize> Deserialize for Box<T> {
         struct BoxSeq<'a, T: 'a> {
             out: &'a mut Option<Box<T>>,
             value: Box<Option<T>>,
-            seq: Box<Seq + 'a>,
+            seq: Box<dyn Seq + 'a>,
         }
 
         impl<'a, T: Deserialize> Seq for BoxSeq<'a, T> {
@@ -214,7 +214,7 @@ impl<T: Deserialize> Deserialize for Box<T> {
         struct BoxMap<'a, T: 'a> {
             out: &'a mut Option<Box<T>>,
             value: Box<Option<T>>,
-            map: Box<Map + 'a>,
+            map: Box<dyn Map + 'a>,
         }
 
         impl<'a, T: Deserialize> Map for BoxMap<'a, T> {
@@ -270,12 +270,12 @@ impl<T: Deserialize> Deserialize for Option<T> {
                 Deserialize::begin(self.out.as_mut().unwrap()).float(n)
             }
 
-            fn seq(&mut self) -> Result<Box<Seq + '_>> {
+            fn seq(&mut self) -> Result<Box<dyn Seq + '_>> {
                 self.out = Some(None);
                 Deserialize::begin(self.out.as_mut().unwrap()).seq()
             }
 
-            fn map(&mut self) -> Result<Box<Map + '_>> {
+            fn map(&mut self) -> Result<Box<dyn Map + '_>> {
                 self.out = Some(None);
                 Deserialize::begin(self.out.as_mut().unwrap()).map()
             }
@@ -288,7 +288,7 @@ impl<T: Deserialize> Deserialize for Option<T> {
 impl<A: Deserialize, B: Deserialize> Deserialize for (A, B) {
     fn begin(out: &mut Option<Self>) -> &mut Visitor {
         impl<A: Deserialize, B: Deserialize> Visitor for Place<(A, B)> {
-            fn seq(&mut self) -> Result<Box<Seq + '_>> {
+            fn seq(&mut self) -> Result<Box<dyn Seq + '_>> {
                 Ok(Box::new(TupleBuilder {
                     out: &mut self.out,
                     tuple: (None, None),
@@ -329,7 +329,7 @@ impl<A: Deserialize, B: Deserialize> Deserialize for (A, B) {
 impl<T: Deserialize> Deserialize for Vec<T> {
     fn begin(out: &mut Option<Self>) -> &mut Visitor {
         impl<T: Deserialize> Visitor for Place<Vec<T>> {
-            fn seq(&mut self) -> Result<Box<Seq + '_>> {
+            fn seq(&mut self) -> Result<Box<dyn Seq + '_>> {
                 Ok(Box::new(VecBuilder {
                     out: &mut self.out,
                     vec: Vec::new(),
@@ -372,7 +372,7 @@ impl<T: Deserialize> Deserialize for Vec<T> {
 impl<K: FromStr + Ord, V: Deserialize> Deserialize for BTreeMap<K, V> {
     fn begin(out: &mut Option<Self>) -> &mut Visitor {
         impl<K: FromStr + Ord, V: Deserialize> Visitor for Place<BTreeMap<K, V>> {
-            fn map(&mut self) -> Result<Box<Map + '_>> {
+            fn map(&mut self) -> Result<Box<dyn Map + '_>> {
                 Ok(Box::new(MapBuilder {
                     out: &mut self.out,
                     map: BTreeMap::new(),

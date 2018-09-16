@@ -100,8 +100,8 @@ pub enum Fragment<'a> {
     U64(u64),
     I64(i64),
     F64(f64),
-    Seq(Box<Seq + 'a>),
-    Map(Box<Map + 'a>),
+    Seq(Box<dyn Seq + 'a>),
+    Map(Box<dyn Map + 'a>),
 }
 
 /// Trait for data structures that can be serialized to a JSON string.
