@@ -1,6 +1,6 @@
 [package]
 name = "miniserde"
-version = "0.1.4"
+version = "0.1.5"
 authors = ["David Tolnay <dtolnay@gmail.com>"]
 license = "MIT OR Apache-2.0"
 description = "Data structure serialization library with several opposite design goals from Serde."
