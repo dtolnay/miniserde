@@ -182,12 +182,6 @@ enum Event<'a> {
     MapStart,
 }
 
-macro_rules! overflow {
-    ($a:ident * 10 + $b:ident, $c:expr) => {
-        $a >= $c / 10 && ($a > $c / 10 || $b > $c % 10)
-    };
-}
-
 impl<'a, 'b> Deserializer<'a, 'b> {
     fn next(&mut self) -> Option<u8> {
         if self.pos < self.input.len() {
@@ -402,16 +396,17 @@ impl<'a, 'b> Deserializer<'a, 'b> {
                             // We need to be careful with overflow. If we can, try to keep the
                             // number as a `u64` until we grow too large. At that point, switch to
                             // parsing the value as a `f64`.
-                            if overflow!(res * 10 + digit, u64::max_value()) {
-                                return self
-                                    .parse_long_integer(
-                                        nonnegative,
-                                        res,
-                                        1, // res * 10^1
-                                    ).map(Float);
+                            res = match res.checked_mul(10).and_then(|r| r.checked_add(digit)) {
+                                Some(new_res) => new_res,
+                                None => {
+                                    return self
+                                        .parse_long_integer(
+                                            nonnegative,
+                                            res,
+                                            1, // res * 10^1
+                                        ).map(Float);
+                                }
                             }
-
-                            res = res * 10 + digit;
                         }
                         _ => {
                             return self.parse_number(nonnegative, res);
@@ -485,16 +480,21 @@ impl<'a, 'b> Deserializer<'a, 'b> {
             let digit = (c - b'0') as u64;
             at_least_one_digit = true;
 
-            if overflow!(significand * 10 + digit, u64::max_value()) {
-                // The next multiply/add would overflow, so just ignore all
-                // further digits.
-                while let b'0'...b'9' = self.peek_or_nul() {
-                    self.bump();
+            significand = match significand
+                .checked_mul(10)
+                .and_then(|r| r.checked_add(digit))
+            {
+                Some(new_significand) => new_significand,
+                None => {
+                    // The next multiply/add would overflow, so just ignore all
+                    // further digits.
+                    while let b'0'...b'9' = self.peek_or_nul() {
+                        self.bump();
+                    }
+                    break;
                 }
-                break;
-            }
+            };
 
-            significand = significand * 10 + digit;
             exponent -= 1;
         }
 
@@ -540,11 +540,10 @@ impl<'a, 'b> Deserializer<'a, 'b> {
             self.bump();
             let digit = (c - b'0') as i32;
 
-            if overflow!(exp * 10 + digit, i32::max_value()) {
-                return self.parse_exponent_overflow(nonnegative, significand, positive_exp);
-            }
-
-            exp = exp * 10 + digit;
+            exp = match exp.checked_mul(10).and_then(|r| r.checked_add(digit)) {
+                Some(new_exp) => new_exp,
+                None => return self.parse_exponent_overflow(nonnegative, significand, positive_exp),
+            };
         }
 
         let final_exp = if positive_exp {
