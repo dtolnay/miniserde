@@ -248,7 +248,7 @@ impl<'a, 'b> Deserializer<'a, 'b> {
                     } else {
                         self.buffer.extend_from_slice(&self.input[start..self.pos]);
                         self.pos += 1;
-                        return Ok(result(&mut self.buffer));
+                        return Ok(result(&self.buffer));
                     }
                 }
                 b'\\' => {
