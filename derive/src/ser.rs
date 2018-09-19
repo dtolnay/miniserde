@@ -44,7 +44,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
 
             struct __Map #wrapper_impl_generics #where_clause {
                 data: &'__a #ident #ty_generics,
-                state: usize,
+                state: miniserde::export::usize,
             }
 
             impl #wrapper_impl_generics miniserde::ser::Map for __Map #wrapper_ty_generics #bounded_where_clause {
@@ -58,7 +58,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
                                 &self.data.#fieldname,
                             )),
                         )*
-                        _ => None,
+                        _ => miniserde::export::None,
                     }
                 }
             }
