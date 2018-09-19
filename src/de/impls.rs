@@ -75,6 +75,7 @@ signed!(i8);
 signed!(i16);
 signed!(i32);
 signed!(i64);
+signed!(isize);
 
 macro_rules! unsigned {
     ($ty:ident) => {
@@ -99,6 +100,7 @@ unsigned!(u8);
 unsigned!(u16);
 unsigned!(u32);
 unsigned!(u64);
+unsigned!(usize);
 
 macro_rules! float {
     ($ty:ident) => {
