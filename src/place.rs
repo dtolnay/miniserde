@@ -32,9 +32,13 @@ macro_rules! make_place {
 
         impl<__T> $name<__T> {
             fn new(out: &mut $crate::export::Option<__T>) -> &mut Self {
-                type __From<'a, __T> = &'a mut $crate::export::Option<__T>;
-                type __To<'a, __T> = &'a mut $name<__T>;
-                unsafe { $crate::export::mem::transmute::<__From<__T>, __To<__T>>(out) }
+                unsafe {
+                    &mut *{
+                        out
+                        as *mut $crate::export::Option<__T>
+                        as *mut $name<__T>
+                    }
+                }
             }
         }
     };
