@@ -42,10 +42,11 @@ pub fn derive(input: DeriveInput) -> TokenStream {
             impl #impl_generics miniserde::Deserialize for #ident #ty_generics #bounded_where_clause {
                 fn begin(__out: &mut miniserde::export::Option<Self>) -> &mut miniserde::de::Visitor {
                     unsafe {
-                        miniserde::export::mem::transmute::<
-                            &mut miniserde::export::Option<Self>,
-                            &mut __Visitor #ty_generics,
-                        >(__out)
+                        &mut *{
+                            __out
+                            as *mut miniserde::export::Option<Self>
+                            as *mut __Visitor #ty_generics
+                        }
                     }
                 }
             }
