@@ -4,7 +4,7 @@ rust:
   - nightly
   - stable
   - beta
-  - 1.26.0
+  - 1.30.0
 
 matrix:
   include:
