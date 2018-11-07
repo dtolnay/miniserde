@@ -137,11 +137,13 @@ fn from_str_impl(j: &str, mut visitor: &mut Visitor) -> Result<()> {
                     visitor = frame.0;
                     layer = frame.1;
                 }
-                _ => if accept_comma {
-                    return Err(Error);
-                } else {
-                    break;
-                },
+                _ => {
+                    if accept_comma {
+                        return Err(Error);
+                    } else {
+                        break;
+                    }
+                }
             }
         }
 
@@ -408,7 +410,8 @@ impl<'a, 'b> Deserializer<'a, 'b> {
                                         nonnegative,
                                         res,
                                         1, // res * 10^1
-                                    ).map(Float);
+                                    )
+                                    .map(Float);
                             }
 
                             res = res * 10 + digit;

@@ -26,7 +26,8 @@ pub fn with_lifetime_bound(generics: &Generics, lifetime: &str) -> Generics {
                 GenericParam::Const(_) => {}
             }
             param
-        })).collect();
+        }))
+        .collect();
 
     Generics {
         params: params,
