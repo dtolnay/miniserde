@@ -9,12 +9,12 @@ rust:
 matrix:
   include:
     - rust: nightly
-      env: MINIMAL
+      name: Minimal versions
       script:
         - cargo update -Z minimal-versions
         - cargo check
     - rust: nightly
-      env: CLIPPY
+      name: Clippy
       script: |
           if rustup component add clippy-preview; then
               cargo clippy --tests -- -D clippy::all
