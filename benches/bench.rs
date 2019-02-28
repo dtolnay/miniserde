@@ -2,8 +2,8 @@
 
 extern crate test;
 
-use miniserde::{Serialize as MiniSerialize, Deserialize as MiniDeserialize};
-use serde_derive::{Serialize, Deserialize};
+use miniserde::{Deserialize as MiniDeserialize, Serialize as MiniSerialize};
+use serde_derive::{Deserialize, Serialize};
 use test::Bencher;
 
 fn input_json() -> String {

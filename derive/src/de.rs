@@ -1,8 +1,8 @@
+use crate::{attr, bound};
 use proc_macro::TokenStream;
 use proc_macro2::Span;
 use quote::quote;
 use syn::{parse_quote, Data, DataStruct, DeriveInput, Fields, Ident};
-use crate::{attr, bound};
 
 pub fn derive(input: DeriveInput) -> TokenStream {
     let fields = match input.data {

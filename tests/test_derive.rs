@@ -1,4 +1,4 @@
-use miniserde::{json, Serialize, Deserialize};
+use miniserde::{json, Deserialize, Serialize};
 
 #[derive(PartialEq, Debug, Serialize, Deserialize)]
 struct Example {
