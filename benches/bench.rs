@@ -1,6 +1,9 @@
 #![feature(test)]
 
 extern crate test;
+
+use miniserde::{Serialize as MiniSerialize, Deserialize as MiniDeserialize};
+use serde_derive::{Serialize, Deserialize};
 use test::Bencher;
 
 fn input_json() -> String {

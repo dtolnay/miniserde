@@ -9,9 +9,9 @@ use crate::error::{Error, Result};
 /// Deserialize a JSON string into any deserializable type.
 ///
 /// ```rust
-/// use miniserde::{json, MiniDeserialize};
+/// use miniserde::{json, Deserialize};
 ///
-/// #[derive(MiniDeserialize, Debug)]
+/// #[derive(Deserialize, Debug)]
 /// struct Example {
 ///     code: u32,
 ///     message: String,

@@ -120,7 +120,7 @@
 //! ## Deserializing a map or struct
 //!
 //! This code demonstrates what is generated for structs by
-//! `#[derive(MiniDeserialize)]`.
+//! `#[derive(Deserialize)]`.
 //!
 //! ```rust
 //! use miniserde::{make_place, Result};

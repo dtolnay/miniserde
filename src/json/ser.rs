@@ -8,9 +8,9 @@ use crate::ser::{Fragment, Map, Seq, Serialize};
 /// Serialize any serializable type into a JSON string.
 ///
 /// ```rust
-/// use miniserde::{json, MiniSerialize};
+/// use miniserde::{json, Serialize};
 ///
-/// #[derive(MiniSerialize, Debug)]
+/// #[derive(Serialize, Debug)]
 /// struct Example {
 ///     code: u32,
 ///     message: String,
