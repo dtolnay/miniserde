@@ -61,7 +61,7 @@ fn from_str_impl(j: &str, mut visitor: &mut Visitor) -> Result<()> {
         stack: Vec::new(),
     };
 
-    loop {
+    'outer: loop {
         let layer = match de.event()? {
             Null => {
                 visitor.null()?;
@@ -109,7 +109,7 @@ fn from_str_impl(j: &str, mut visitor: &mut Visitor) -> Result<()> {
                     visitor = frame.0;
                     frame.1
                 }
-                None => return Ok(()),
+                None => break 'outer,
             },
         };
 
@@ -128,7 +128,7 @@ fn from_str_impl(j: &str, mut visitor: &mut Visitor) -> Result<()> {
                     };
                     let frame = match de.stack.pop() {
                         Some(frame) => frame,
-                        None => return Ok(()),
+                        None => break 'outer,
                     };
                     accept_comma = true;
                     visitor = frame.0;
@@ -167,6 +167,11 @@ fn from_str_impl(j: &str, mut visitor: &mut Visitor) -> Result<()> {
                 de.stack.push((outer, Layer::Map(map)));
             }
         }
+    }
+
+    match de.parse_whitespace() {
+        Some(_) => Err(Error),
+        None => Ok(()),
     }
 }
 
