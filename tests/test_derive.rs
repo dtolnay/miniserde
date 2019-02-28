@@ -1,12 +1,12 @@
-use miniserde::{json, MiniSerialize, MiniDeserialize};
+use miniserde::{json, Serialize, Deserialize};
 
-#[derive(PartialEq, Debug, MiniSerialize, MiniDeserialize)]
+#[derive(PartialEq, Debug, Serialize, Deserialize)]
 struct Example {
     x: String,
     n: Nested,
 }
 
-#[derive(PartialEq, Debug, MiniSerialize, MiniDeserialize)]
+#[derive(PartialEq, Debug, Serialize, Deserialize)]
 struct Nested {
     y: Option<Vec<String>>,
     z: Option<String>,

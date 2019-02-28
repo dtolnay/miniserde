@@ -47,7 +47,7 @@
 //! ## Serializing a map or struct
 //!
 //! This code demonstrates what is generated for structs by
-//! `#[derive(MiniSerialize)]`.
+//! `#[derive(Serialize)]`.
 //!
 //! ```rust
 //! use miniserde::ser::{Fragment, Map, Serialize};

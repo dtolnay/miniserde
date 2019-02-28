@@ -23,9 +23,9 @@ Version requirement: rustc 1.26+
 ### Example
 
 ```rust
-use miniserde::{json, MiniSerialize, MiniDeserialize};
+use miniserde::{json, Serialize, Deserialize};
 
-#[derive(MiniSerialize, MiniDeserialize, Debug)]
+#[derive(Serialize, Deserialize, Debug)]
 struct Example {
     code: u32,
     message: String,
