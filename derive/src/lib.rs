@@ -1,13 +1,6 @@
 #![recursion_limit = "128"]
 
-#[macro_use]
-extern crate quote;
-
-#[macro_use]
-extern crate syn;
-
 extern crate proc_macro;
-extern crate proc_macro2;
 
 mod attr;
 mod bound;
@@ -15,7 +8,7 @@ mod de;
 mod ser;
 
 use proc_macro::TokenStream;
-use syn::DeriveInput;
+use syn::{parse_macro_input, DeriveInput};
 
 #[proc_macro_derive(MiniSerialize, attributes(serde))]
 pub fn derive_mini_serialize(input: TokenStream) -> TokenStream {

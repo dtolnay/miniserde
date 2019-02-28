@@ -1,4 +1,4 @@
-use json::Value;
+use crate::json::Value;
 
 pub fn safely(value: Value) {
     match value {

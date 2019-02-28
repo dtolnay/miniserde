@@ -3,16 +3,13 @@ use std::mem;
 use std::str;
 
 use self::Event::*;
-use de::{Deserialize, Map, Seq, Visitor};
-use error::{Error, Result};
+use crate::de::{Deserialize, Map, Seq, Visitor};
+use crate::error::{Error, Result};
 
 /// Deserialize a JSON string into any deserializable type.
 ///
 /// ```rust
-/// #[macro_use]
-/// extern crate miniserde;
-///
-/// use miniserde::json;
+/// use miniserde::{json, MiniDeserialize};
 ///
 /// #[derive(MiniDeserialize, Debug)]
 /// struct Example {

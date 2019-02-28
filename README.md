@@ -23,10 +23,7 @@ Version requirement: rustc 1.26+
 ### Example
 
 ```rust
-#[macro_use]
-extern crate miniserde;
-
-use miniserde::json;
+use miniserde::{json, MiniSerialize, MiniDeserialize};
 
 #[derive(MiniSerialize, MiniDeserialize, Debug)]
 struct Example {

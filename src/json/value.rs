@@ -1,12 +1,12 @@
 use std::borrow::Cow;
 use std::mem;
 
-use de::{Deserialize, Map, Seq, Visitor};
-use error::Result;
-use json::{Array, Number, Object};
-use private;
-use ser::{Fragment, Serialize};
-use Place;
+use crate::de::{Deserialize, Map, Seq, Visitor};
+use crate::error::Result;
+use crate::json::{Array, Number, Object};
+use crate::private;
+use crate::ser::{Fragment, Serialize};
+use crate::Place;
 
 /// Any valid JSON value.
 ///

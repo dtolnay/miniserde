@@ -3,8 +3,8 @@ use std::collections::{btree_map, hash_map, BTreeMap, HashMap};
 use std::hash::{BuildHasher, Hash};
 use std::slice;
 
-use private;
-use ser::{Fragment, Map, Seq, Serialize};
+use crate::private;
+use crate::ser::{Fragment, Map, Seq, Serialize};
 
 impl Serialize for () {
     fn begin(&self) -> Fragment {

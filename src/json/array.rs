@@ -2,7 +2,7 @@ use std::iter::FromIterator;
 use std::mem;
 use std::ops::{Deref, DerefMut};
 
-use json::{drop, Value};
+use crate::json::{drop, Value};
 
 /// A `Vec<Value>` with a non-recursive drop impl.
 #[derive(Clone, Debug, Default)]

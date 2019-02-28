@@ -3,15 +3,12 @@ use std::borrow::Cow;
 use itoa;
 use ryu;
 
-use ser::{Fragment, Map, Seq, Serialize};
+use crate::ser::{Fragment, Map, Seq, Serialize};
 
 /// Serialize any serializable type into a JSON string.
 ///
 /// ```rust
-/// #[macro_use]
-/// extern crate miniserde;
-///
-/// use miniserde::json;
+/// use miniserde::{json, MiniSerialize};
 ///
 /// #[derive(MiniSerialize, Debug)]
 /// struct Example {

@@ -1,5 +1,5 @@
-use de::{Map, Seq, Visitor};
-use error::Result;
+use crate::de::{Map, Seq, Visitor};
+use crate::error::Result;
 
 impl Visitor {
     pub fn ignore() -> &'static mut Visitor {

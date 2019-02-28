@@ -24,10 +24,7 @@
 //! type.
 //!
 //! ```rust
-//! #[macro_use]
-//! extern crate miniserde;
-//!
-//! use miniserde::Result;
+//! use miniserde::{make_place, Result};
 //! use miniserde::de::{Deserialize, Visitor};
 //!
 //! make_place!(Place);
@@ -64,10 +61,7 @@
 //! that can hand out places to write sequence elements one element at a time.
 //!
 //! ```rust
-//! #[macro_use]
-//! extern crate miniserde;
-//!
-//! use miniserde::Result;
+//! use miniserde::{make_place, Result};
 //! use miniserde::de::{Deserialize, Seq, Visitor};
 //! use std::mem;
 //!
@@ -129,10 +123,7 @@
 //! `#[derive(MiniDeserialize)]`.
 //!
 //! ```rust
-//! #[macro_use]
-//! extern crate miniserde;
-//!
-//! use miniserde::Result;
+//! use miniserde::{make_place, Result};
 //! use miniserde::de::{Deserialize, Map, Visitor};
 //!
 //! make_place!(Place);
@@ -199,7 +190,7 @@
 
 mod impls;
 
-use error::{Error, Result};
+use crate::error::{Error, Result};
 
 /// Trait for data structures that can be deserialized from a JSON string.
 ///
@@ -208,9 +199,7 @@ pub trait Deserialize: Sized {
     /// The only correct implementation of this method is:
     ///
     /// ```rust
-    /// # #[macro_use]
-    /// # extern crate miniserde;
-    /// #
+    /// # use miniserde::make_place;
     /// # use miniserde::de::{Deserialize, Visitor};
     /// #
     /// # make_place!(Place);

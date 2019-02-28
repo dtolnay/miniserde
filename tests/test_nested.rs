@@ -1,5 +1,3 @@
-extern crate miniserde;
-
 use miniserde::json::{self, Value};
 
 #[test]

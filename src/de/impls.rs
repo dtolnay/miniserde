@@ -3,9 +3,9 @@ use std::hash::{BuildHasher, Hash};
 use std::mem;
 use std::str::FromStr;
 
-use de::{Deserialize, Map, Seq, Visitor};
-use error::{Error, Result};
-use Place;
+use crate::de::{Deserialize, Map, Seq, Visitor};
+use crate::error::{Error, Result};
+use crate::Place;
 
 impl Deserialize for () {
     fn begin(out: &mut Option<Self>) -> &mut Visitor {

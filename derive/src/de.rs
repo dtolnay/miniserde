@@ -1,7 +1,8 @@
 use proc_macro::TokenStream;
 use proc_macro2::Span;
-use syn::{Data, DataStruct, DeriveInput, Fields, Ident};
-use {attr, bound};
+use quote::quote;
+use syn::{parse_quote, Data, DataStruct, DeriveInput, Fields, Ident};
+use crate::{attr, bound};
 
 pub fn derive(input: DeriveInput) -> TokenStream {
     let fields = match input.data {
@@ -32,8 +33,6 @@ pub fn derive(input: DeriveInput) -> TokenStream {
     TokenStream::from(quote! {
         #[allow(non_upper_case_globals)]
         const #dummy: () = {
-            extern crate miniserde;
-
             #[repr(C)]
             struct __Visitor #impl_generics #where_clause {
                 __out: miniserde::export::Option<#ident #ty_generics>,

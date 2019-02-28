@@ -9,10 +9,7 @@
 //! # Example
 //!
 //! ```rust
-//! #[macro_use]
-//! extern crate miniserde;
-//!
-//! use miniserde::json;
+//! use miniserde::{json, MiniSerialize, MiniDeserialize};
 //!
 //! #[derive(MiniSerialize, MiniDeserialize, Debug)]
 //! struct Example {
@@ -135,14 +132,8 @@
     allow(cast_lossless, enum_variant_names, transmute_ptr_to_ptr)
 )]
 
-#[allow(unused_imports)]
-#[macro_use]
-extern crate mini_internal;
 #[doc(hidden)]
 pub use mini_internal::*;
-
-extern crate itoa;
-extern crate ryu;
 
 // Not public API.
 #[doc(hidden)]
@@ -162,10 +153,10 @@ pub mod json;
 pub mod ser;
 
 #[doc(inline)]
-pub use de::Deserialize;
-pub use error::{Error, Result};
+pub use crate::de::Deserialize;
+pub use crate::error::{Error, Result};
 #[doc(inline)]
-pub use ser::Serialize;
+pub use crate::ser::Serialize;
 
 make_place!(Place);
 

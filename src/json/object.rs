@@ -4,9 +4,9 @@ use std::iter::FromIterator;
 use std::mem;
 use std::ops::{Deref, DerefMut};
 
-use json::{drop, Value};
-use private;
-use ser::{self, Fragment, Serialize};
+use crate::json::{drop, Value};
+use crate::private;
+use crate::ser::{self, Fragment, Serialize};
 
 /// A `BTreeMap<String, Value>` with a non-recursive drop impl.
 #[derive(Clone, Debug, Default)]

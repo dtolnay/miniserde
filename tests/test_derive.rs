@@ -1,7 +1,4 @@
-#[macro_use]
-extern crate miniserde;
-
-use miniserde::json;
+use miniserde::{json, MiniSerialize, MiniDeserialize};
 
 #[derive(PartialEq, Debug, MiniSerialize, MiniDeserialize)]
 struct Example {
