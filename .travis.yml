@@ -15,7 +15,6 @@ matrix:
         - cargo check
     - rust: nightly
       name: Clippy
-      script: |
-          if rustup component add clippy; then
-              cargo clippy --tests -- -D clippy::all
-          fi
+      script:
+        - rustup component add clippy || travis_terminate 0
+        - cargo clippy --tests -- -D clippy::all
