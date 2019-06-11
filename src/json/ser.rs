@@ -60,7 +60,7 @@ fn to_string_impl(value: &Serialize) -> String {
             Fragment::Str(s) => escape_str(&s, &mut out),
             Fragment::U64(n) => out.push_str(itoa::Buffer::new().format(n)),
             Fragment::I64(n) => out.push_str(itoa::Buffer::new().format(n)),
-            Fragment::F64(n) => out.push_str(ryu::Buffer::new().format(n)),
+            Fragment::F64(n) => out.push_str(ryu::Buffer::new().format_finite(n)),
             Fragment::Seq(mut seq) => {
                 out.push('[');
                 // invariant: `seq` must outlive `first`
