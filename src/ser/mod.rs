@@ -37,7 +37,7 @@
 //! }
 //!
 //! impl<'a, T: Serialize> Seq for SliceStream<'a, T> {
-//!     fn next(&mut self) -> Option<&Serialize> {
+//!     fn next(&mut self) -> Option<&dyn Serialize> {
 //!         let element = self.iter.next()?;
 //!         Some(element)
 //!     }
@@ -74,7 +74,7 @@
 //! }
 //!
 //! impl<'a> Map for DemoStream<'a> {
-//!     fn next(&mut self) -> Option<(Cow<str>, &Serialize)> {
+//!     fn next(&mut self) -> Option<(Cow<str>, &dyn Serialize)> {
 //!         let state = self.state;
 //!         self.state += 1;
 //!         match state {
@@ -100,8 +100,8 @@ pub enum Fragment<'a> {
     U64(u64),
     I64(i64),
     F64(f64),
-    Seq(Box<Seq + 'a>),
-    Map(Box<Map + 'a>),
+    Seq(Box<dyn Seq + 'a>),
+    Map(Box<dyn Map + 'a>),
 }
 
 /// Trait for data structures that can be serialized to a JSON string.
@@ -115,12 +115,12 @@ pub trait Serialize {
 ///
 /// [Refer to the module documentation for examples.][::ser]
 pub trait Seq {
-    fn next(&mut self) -> Option<&Serialize>;
+    fn next(&mut self) -> Option<&dyn Serialize>;
 }
 
 /// Trait that can iterate key-value entries of a map or struct.
 ///
 /// [Refer to the module documentation for examples.][::ser]
 pub trait Map {
-    fn next(&mut self) -> Option<(Cow<str>, &Serialize)>;
+    fn next(&mut self) -> Option<(Cow<str>, &dyn Serialize)>;
 }

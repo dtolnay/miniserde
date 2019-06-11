@@ -1,8 +1,8 @@
 use crate::de::{Map, Seq, Visitor};
 use crate::error::Result;
 
-impl Visitor {
-    pub fn ignore() -> &'static mut Visitor {
+impl dyn Visitor {
+    pub fn ignore() -> &'static mut dyn Visitor {
         careful!(&mut Ignore as &mut Ignore)
     }
 }
@@ -34,17 +34,17 @@ impl Visitor for Ignore {
         Ok(())
     }
 
-    fn seq(&mut self) -> Result<Box<Seq + '_>> {
+    fn seq(&mut self) -> Result<Box<dyn Seq + '_>> {
         Ok(Box::new(Ignore))
     }
 
-    fn map(&mut self) -> Result<Box<Map + '_>> {
+    fn map(&mut self) -> Result<Box<dyn Map + '_>> {
         Ok(Box::new(Ignore))
     }
 }
 
 impl Seq for Ignore {
-    fn element(&mut self) -> Result<&mut Visitor> {
+    fn element(&mut self) -> Result<&mut dyn Visitor> {
         Ok(Visitor::ignore())
     }
 
@@ -54,7 +54,7 @@ impl Seq for Ignore {
 }
 
 impl Map for Ignore {
-    fn key(&mut self, _k: &str) -> Result<&mut Visitor> {
+    fn key(&mut self, _k: &str) -> Result<&mut dyn Visitor> {
         Ok(Visitor::ignore())
     }
 

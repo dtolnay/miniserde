@@ -36,12 +36,12 @@ struct Deserializer<'a, 'b> {
     input: &'a [u8],
     pos: usize,
     buffer: Vec<u8>,
-    stack: Vec<(&'b mut Visitor, Layer<'b>)>,
+    stack: Vec<(&'b mut dyn Visitor, Layer<'b>)>,
 }
 
 enum Layer<'a> {
-    Seq(Box<Seq + 'a>),
-    Map(Box<Map + 'a>),
+    Seq(Box<dyn Seq + 'a>),
+    Map(Box<dyn Map + 'a>),
 }
 
 impl<'a, 'b> Drop for Deserializer<'a, 'b> {
@@ -53,7 +53,7 @@ impl<'a, 'b> Drop for Deserializer<'a, 'b> {
     }
 }
 
-fn from_str_impl(j: &str, mut visitor: &mut Visitor) -> Result<()> {
+fn from_str_impl(j: &str, mut visitor: &mut dyn Visitor) -> Result<()> {
     let mut de = Deserializer {
         input: j.as_bytes(),
         pos: 0,
@@ -88,11 +88,11 @@ fn from_str_impl(j: &str, mut visitor: &mut Visitor) -> Result<()> {
                 None
             }
             SeqStart => {
-                let seq = careful!(visitor.seq()? as Box<Seq>);
+                let seq = careful!(visitor.seq()? as Box<dyn Seq>);
                 Some(Layer::Seq(seq))
             }
             MapStart => {
-                let map = careful!(visitor.map()? as Box<Map>);
+                let map = careful!(visitor.map()? as Box<dyn Map>);
                 Some(Layer::Map(map))
             }
         };
@@ -146,7 +146,7 @@ fn from_str_impl(j: &str, mut visitor: &mut Visitor) -> Result<()> {
 
         match layer {
             Layer::Seq(mut seq) => {
-                let inner = careful!(seq.element()? as &mut Visitor);
+                let inner = careful!(seq.element()? as &mut dyn Visitor);
                 let outer = mem::replace(&mut visitor, inner);
                 de.stack.push((outer, Layer::Seq(seq)));
             }
@@ -157,7 +157,7 @@ fn from_str_impl(j: &str, mut visitor: &mut Visitor) -> Result<()> {
                 }
                 let inner = {
                     let k = de.parse_str()?;
-                    careful!(map.key(k)? as &mut Visitor)
+                    careful!(map.key(k)? as &mut dyn Visitor)
                 };
                 match de.parse_whitespace() {
                     Some(b':') => de.bump(),

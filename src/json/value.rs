@@ -57,7 +57,7 @@ impl Serialize for Value {
 }
 
 impl Deserialize for Value {
-    fn begin(out: &mut Option<Self>) -> &mut Visitor {
+    fn begin(out: &mut Option<Self>) -> &mut dyn Visitor {
         impl Visitor for Place<Value> {
             fn null(&mut self) -> Result<()> {
                 self.out = Some(Value::Null);
@@ -89,7 +89,7 @@ impl Deserialize for Value {
                 Ok(())
             }
 
-            fn seq(&mut self) -> Result<Box<Seq + '_>> {
+            fn seq(&mut self) -> Result<Box<dyn Seq + '_>> {
                 Ok(Box::new(ArrayBuilder {
                     out: &mut self.out,
                     array: Array::new(),
@@ -97,7 +97,7 @@ impl Deserialize for Value {
                 }))
             }
 
-            fn map(&mut self) -> Result<Box<Map + '_>> {
+            fn map(&mut self) -> Result<Box<dyn Map + '_>> {
                 Ok(Box::new(ObjectBuilder {
                     out: &mut self.out,
                     object: Object::new(),
@@ -122,7 +122,7 @@ impl Deserialize for Value {
         }
 
         impl<'a> Seq for ArrayBuilder<'a> {
-            fn element(&mut self) -> Result<&mut Visitor> {
+            fn element(&mut self) -> Result<&mut dyn Visitor> {
                 self.shift();
                 Ok(Deserialize::begin(&mut self.element))
             }
@@ -150,7 +150,7 @@ impl Deserialize for Value {
         }
 
         impl<'a> Map for ObjectBuilder<'a> {
-            fn key(&mut self, k: &str) -> Result<&mut Visitor> {
+            fn key(&mut self, k: &str) -> Result<&mut dyn Visitor> {
                 self.shift();
                 self.key = Some(k.to_owned());
                 Ok(Deserialize::begin(&mut self.value))

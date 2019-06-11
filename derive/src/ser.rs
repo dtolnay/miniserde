@@ -47,7 +47,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
             }
 
             impl #wrapper_impl_generics miniserde::ser::Map for __Map #wrapper_ty_generics #bounded_where_clause {
-                fn next(&mut self) -> miniserde::export::Option<(miniserde::export::Cow<miniserde::export::str>, &miniserde::Serialize)> {
+                fn next(&mut self) -> miniserde::export::Option<(miniserde::export::Cow<miniserde::export::str>, &dyn miniserde::Serialize)> {
                     let __state = self.state;
                     self.state = __state + 1;
                     match __state {

@@ -102,13 +102,13 @@ impl<'a, T: ?Sized + ToOwned + Serialize> Serialize for Cow<'a, T> {
 impl<A: Serialize, B: Serialize> Serialize for (A, B) {
     fn begin(&self) -> Fragment {
         struct TupleStream<'a> {
-            first: &'a Serialize,
-            second: &'a Serialize,
+            first: &'a dyn Serialize,
+            second: &'a dyn Serialize,
             state: usize,
         }
 
         impl<'a> Seq for TupleStream<'a> {
-            fn next(&mut self) -> Option<&Serialize> {
+            fn next(&mut self) -> Option<&dyn Serialize> {
                 let state = self.state;
                 self.state += 1;
                 match state {
@@ -149,9 +149,9 @@ where
         struct HashMapStream<'a, K: 'a, V: 'a>(hash_map::Iter<'a, K, V>);
 
         impl<'a, K: ToString, V: Serialize> Map for HashMapStream<'a, K, V> {
-            fn next(&mut self) -> Option<(Cow<str>, &Serialize)> {
+            fn next(&mut self) -> Option<(Cow<str>, &dyn Serialize)> {
                 let (k, v) = self.0.next()?;
-                Some((Cow::Owned(k.to_string()), v as &Serialize))
+                Some((Cow::Owned(k.to_string()), v as &dyn Serialize))
             }
         }
 
@@ -170,7 +170,7 @@ impl private {
         struct SliceStream<'a, T: 'a>(slice::Iter<'a, T>);
 
         impl<'a, T: Serialize> Seq for SliceStream<'a, T> {
-            fn next(&mut self) -> Option<&Serialize> {
+            fn next(&mut self) -> Option<&dyn Serialize> {
                 let element = self.0.next()?;
                 Some(element)
             }
@@ -183,9 +183,9 @@ impl private {
         struct BTreeMapStream<'a, K: 'a, V: 'a>(btree_map::Iter<'a, K, V>);
 
         impl<'a, K: ToString, V: Serialize> Map for BTreeMapStream<'a, K, V> {
-            fn next(&mut self) -> Option<(Cow<str>, &Serialize)> {
+            fn next(&mut self) -> Option<(Cow<str>, &dyn Serialize)> {
                 let (k, v) = self.0.next()?;
-                Some((Cow::Owned(k.to_string()), v as &Serialize))
+                Some((Cow::Owned(k.to_string()), v as &dyn Serialize))
             }
         }
 

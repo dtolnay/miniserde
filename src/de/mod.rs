@@ -45,7 +45,7 @@
 //! }
 //!
 //! impl Deserialize for MyBoolean {
-//!     fn begin(out: &mut Option<Self>) -> &mut Visitor {
+//!     fn begin(out: &mut Option<Self>) -> &mut dyn Visitor {
 //!         // All Deserialize impls will look exactly like this. There is no
 //!         // other correct implementation of Deserialize.
 //!         Place::new(out)
@@ -70,7 +70,7 @@
 //! struct MyVec<T>(Vec<T>);
 //!
 //! impl<T: Deserialize> Visitor for Place<MyVec<T>> {
-//!     fn seq(&mut self) -> Result<Box<Seq + '_>> {
+//!     fn seq(&mut self) -> Result<Box<dyn Seq + '_>> {
 //!         Ok(Box::new(VecBuilder {
 //!             out: &mut self.out,
 //!             vec: Vec::new(),
@@ -89,7 +89,7 @@
 //! }
 //!
 //! impl<'a, T: Deserialize> Seq for VecBuilder<'a, T> {
-//!     fn element(&mut self) -> Result<&mut Visitor> {
+//!     fn element(&mut self) -> Result<&mut dyn Visitor> {
 //!         // Free up the place by transfering the most recent element
 //!         // into self.vec.
 //!         self.vec.extend(self.element.take());
@@ -108,7 +108,7 @@
 //! }
 //!
 //! impl<T: Deserialize> Deserialize for MyVec<T> {
-//!     fn begin(out: &mut Option<Self>) -> &mut Visitor {
+//!     fn begin(out: &mut Option<Self>) -> &mut dyn Visitor {
 //!         // As mentioned, all Deserialize impls will look like this.
 //!         Place::new(out)
 //!     }
@@ -135,7 +135,7 @@
 //! }
 //!
 //! impl Visitor for Place<Demo> {
-//!     fn map(&mut self) -> Result<Box<Map + '_>> {
+//!     fn map(&mut self) -> Result<Box<dyn Map + '_>> {
 //!         // Like for sequences, we produce a builder that can hand out places
 //!         // to write one struct field at a time.
 //!         Ok(Box::new(DemoBuilder {
@@ -153,7 +153,7 @@
 //! }
 //!
 //! impl<'a> Map for DemoBuilder<'a> {
-//!     fn key(&mut self, k: &str) -> Result<&mut Visitor> {
+//!     fn key(&mut self, k: &str) -> Result<&mut dyn Visitor> {
 //!         // Figure out which field is being deserialized and return a place
 //!         // to write it.
 //!         //
@@ -179,7 +179,7 @@
 //! }
 //!
 //! impl Deserialize for Demo {
-//!     fn begin(out: &mut Option<Self>) -> &mut Visitor {
+//!     fn begin(out: &mut Option<Self>) -> &mut dyn Visitor {
 //!         // All Deserialize impls look like this.
 //!         Place::new(out)
 //!     }
@@ -207,14 +207,14 @@ pub trait Deserialize: Sized {
     /// # impl Visitor for Place<S> {}
     /// #
     /// # impl Deserialize for S {
-    /// fn begin(out: &mut Option<Self>) -> &mut Visitor {
+    /// fn begin(out: &mut Option<Self>) -> &mut dyn Visitor {
     ///     Place::new(out)
     /// }
     /// # }
     /// #
     /// # fn main() {}
     /// ```
-    fn begin(out: &mut Option<Self>) -> &mut Visitor;
+    fn begin(out: &mut Option<Self>) -> &mut dyn Visitor;
 
     // Not public API. This method is only intended for Option<T>, should not
     // need to be implemented outside of this crate.
@@ -258,11 +258,11 @@ pub trait Visitor {
         Err(Error)
     }
 
-    fn seq(&mut self) -> Result<Box<Seq + '_>> {
+    fn seq(&mut self) -> Result<Box<dyn Seq + '_>> {
         Err(Error)
     }
 
-    fn map(&mut self) -> Result<Box<Map + '_>> {
+    fn map(&mut self) -> Result<Box<dyn Map + '_>> {
         Err(Error)
     }
 }
@@ -271,7 +271,7 @@ pub trait Visitor {
 ///
 /// [Refer to the module documentation for examples.][::de]
 pub trait Seq {
-    fn element(&mut self) -> Result<&mut Visitor>;
+    fn element(&mut self) -> Result<&mut dyn Visitor>;
     fn finish(&mut self) -> Result<()>;
 }
 
@@ -279,6 +279,6 @@ pub trait Seq {
 ///
 /// [Refer to the module documentation for examples.][::de]
 pub trait Map {
-    fn key(&mut self, k: &str) -> Result<&mut Visitor>;
+    fn key(&mut self, k: &str) -> Result<&mut dyn Visitor>;
     fn finish(&mut self) -> Result<()>;
 }

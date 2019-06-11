@@ -35,8 +35,8 @@ struct Serializer<'a> {
 }
 
 enum Layer<'a> {
-    Seq(Box<Seq + 'a>),
-    Map(Box<Map + 'a>),
+    Seq(Box<dyn Seq + 'a>),
+    Map(Box<dyn Map + 'a>),
 }
 
 impl<'a> Drop for Serializer<'a> {
@@ -48,7 +48,7 @@ impl<'a> Drop for Serializer<'a> {
     }
 }
 
-fn to_string_impl(value: &Serialize) -> String {
+fn to_string_impl(value: &dyn Serialize) -> String {
     let mut out = String::new();
     let mut serializer = Serializer { stack: Vec::new() };
     let mut fragment = value.begin();
@@ -70,7 +70,7 @@ fn to_string_impl(value: &Serialize) -> String {
             Fragment::Seq(mut seq) => {
                 out.push('[');
                 // invariant: `seq` must outlive `first`
-                match careful!(seq.next() as Option<&Serialize>) {
+                match careful!(seq.next() as Option<&dyn Serialize>) {
                     Some(first) => {
                         serializer.stack.push(Layer::Seq(seq));
                         fragment = first.begin();
@@ -82,7 +82,7 @@ fn to_string_impl(value: &Serialize) -> String {
             Fragment::Map(mut map) => {
                 out.push('{');
                 // invariant: `map` must outlive `first`
-                match careful!(map.next() as Option<(Cow<str>, &Serialize)>) {
+                match careful!(map.next() as Option<(Cow<str>, &dyn Serialize)>) {
                     Some((key, first)) => {
                         escape_str(&key, &mut out);
                         out.push(':');
@@ -99,7 +99,7 @@ fn to_string_impl(value: &Serialize) -> String {
             match serializer.stack.last_mut() {
                 Some(Layer::Seq(seq)) => {
                     // invariant: `seq` must outlive `next`
-                    match careful!(seq.next() as Option<&Serialize>) {
+                    match careful!(seq.next() as Option<&dyn Serialize>) {
                         Some(next) => {
                             out.push(',');
                             fragment = next.begin();
@@ -110,7 +110,7 @@ fn to_string_impl(value: &Serialize) -> String {
                 }
                 Some(Layer::Map(map)) => {
                     // invariant: `map` must outlive `next`
-                    match careful!(map.next() as Option<(Cow<str>, &Serialize)>) {
+                    match careful!(map.next() as Option<(Cow<str>, &dyn Serialize)>) {
                         Some((key, next)) => {
                             out.push(',');
                             escape_str(&key, &mut out);

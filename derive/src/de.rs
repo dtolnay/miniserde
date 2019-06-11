@@ -39,7 +39,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
             }
 
             impl #impl_generics miniserde::Deserialize for #ident #ty_generics #bounded_where_clause {
-                fn begin(__out: &mut miniserde::export::Option<Self>) -> &mut miniserde::de::Visitor {
+                fn begin(__out: &mut miniserde::export::Option<Self>) -> &mut dyn miniserde::de::Visitor {
                     unsafe {
                         &mut *{
                             __out
@@ -51,7 +51,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
             }
 
             impl #impl_generics miniserde::de::Visitor for __Visitor #ty_generics #bounded_where_clause {
-                fn map(&mut self) -> miniserde::Result<miniserde::export::Box<miniserde::de::Map + '_>> {
+                fn map(&mut self) -> miniserde::Result<miniserde::export::Box<dyn miniserde::de::Map + '_>> {
                     Ok(miniserde::export::Box::new(__State {
                         #(
                             #fieldname: miniserde::Deserialize::default(),
@@ -69,7 +69,7 @@ pub fn derive(input: DeriveInput) -> TokenStream {
             }
 
             impl #wrapper_impl_generics miniserde::de::Map for __State #wrapper_ty_generics #bounded_where_clause {
-                fn key(&mut self, __k: &miniserde::export::str) -> miniserde::Result<&mut miniserde::de::Visitor> {
+                fn key(&mut self, __k: &miniserde::export::str) -> miniserde::Result<&mut dyn miniserde::de::Visitor> {
                     match __k {
                         #(
                             #fieldstr => miniserde::export::Ok(miniserde::Deserialize::begin(&mut self.#fieldname2)),
