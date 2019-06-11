@@ -288,13 +288,13 @@ impl<'a, 'b> Deserializer<'a, 'b> {
             b't' => self.buffer.push(b'\t'),
             b'u' => {
                 let c = match self.decode_hex_escape()? {
-                    0xDC00...0xDFFF => {
+                    0xDC00..=0xDFFF => {
                         return Err(Error);
                     }
 
                     // Non-BMP characters are encoded as a sequence of
                     // two hex escapes, representing UTF-16 surrogates.
-                    n1 @ 0xD800...0xDBFF => {
+                    n1 @ 0xD800..=0xDBFF => {
                         if self.next_or_eof()? != b'\\' {
                             return Err(Error);
                         }
@@ -341,7 +341,7 @@ impl<'a, 'b> Deserializer<'a, 'b> {
         let mut n = 0;
         for _ in 0..4 {
             n = match self.next_or_eof()? {
-                c @ b'0'...b'9' => n * 16_u16 + ((c as u16) - (b'0' as u16)),
+                c @ b'0'..=b'9' => n * 16_u16 + ((c as u16) - (b'0' as u16)),
                 b'a' | b'A' => n * 16_u16 + 10_u16,
                 b'b' | b'B' => n * 16_u16 + 11_u16,
                 b'c' | b'C' => n * 16_u16 + 12_u16,
@@ -390,16 +390,16 @@ impl<'a, 'b> Deserializer<'a, 'b> {
             b'0' => {
                 // There can be only one leading '0'.
                 match self.peek_or_nul() {
-                    b'0'...b'9' => Err(Error),
+                    b'0'..=b'9' => Err(Error),
                     _ => self.parse_number(nonnegative, 0),
                 }
             }
-            c @ b'1'...b'9' => {
+            c @ b'1'..=b'9' => {
                 let mut res = (c - b'0') as u64;
 
                 loop {
                     match self.peek_or_nul() {
-                        c @ b'0'...b'9' => {
+                        c @ b'0'..=b'9' => {
                             self.bump();
                             let digit = (c - b'0') as u64;
 
@@ -436,7 +436,7 @@ impl<'a, 'b> Deserializer<'a, 'b> {
     ) -> Result<f64> {
         loop {
             match self.peek_or_nul() {
-                b'0'...b'9' => {
+                b'0'..=b'9' => {
                     self.bump();
                     // This could overflow... if your integer is gigabytes long.
                     // Ignore that possibility.
@@ -485,7 +485,7 @@ impl<'a, 'b> Deserializer<'a, 'b> {
         self.bump();
 
         let mut at_least_one_digit = false;
-        while let c @ b'0'...b'9' = self.peek_or_nul() {
+        while let c @ b'0'..=b'9' = self.peek_or_nul() {
             self.bump();
             let digit = (c - b'0') as u64;
             at_least_one_digit = true;
@@ -493,7 +493,7 @@ impl<'a, 'b> Deserializer<'a, 'b> {
             if overflow!(significand * 10 + digit, u64::max_value()) {
                 // The next multiply/add would overflow, so just ignore all
                 // further digits.
-                while let b'0'...b'9' = self.peek_or_nul() {
+                while let b'0'..=b'9' = self.peek_or_nul() {
                     self.bump();
                 }
                 break;
@@ -535,13 +535,13 @@ impl<'a, 'b> Deserializer<'a, 'b> {
 
         // Make sure a digit follows the exponent place.
         let mut exp = match self.next_or_nul() {
-            c @ b'0'...b'9' => (c - b'0') as i32,
+            c @ b'0'..=b'9' => (c - b'0') as i32,
             _ => {
                 return Err(Error);
             }
         };
 
-        while let c @ b'0'...b'9' = self.peek_or_nul() {
+        while let c @ b'0'..=b'9' = self.peek_or_nul() {
             self.bump();
             let digit = (c - b'0') as i32;
 
@@ -576,7 +576,7 @@ impl<'a, 'b> Deserializer<'a, 'b> {
             return Err(Error);
         }
 
-        while let b'0'...b'9' = self.peek_or_nul() {
+        while let b'0'..=b'9' = self.peek_or_nul() {
             self.bump();
         }
         Ok(if nonnegative { 0.0 } else { -0.0 })
@@ -590,7 +590,7 @@ impl<'a, 'b> Deserializer<'a, 'b> {
         self.bump();
         match peek {
             b'"' => self.parse_str().map(Str),
-            digit @ b'0'...b'9' => self.parse_integer(true, digit),
+            digit @ b'0'..=b'9' => self.parse_integer(true, digit),
             b'-' => {
                 let first_digit = self.next_or_nul();
                 self.parse_integer(false, first_digit)
@@ -678,7 +678,7 @@ static POW10: [f64; 309] =
      1e290, 1e291, 1e292, 1e293, 1e294, 1e295, 1e296, 1e297, 1e298, 1e299,
      1e300, 1e301, 1e302, 1e303, 1e304, 1e305, 1e306, 1e307, 1e308];
 
-const CT: bool = true; // control character \x00...\x1F
+const CT: bool = true; // control character \x00..=\x1F
 const QU: bool = true; // quote \x22
 const BS: bool = true; // backslash \x5C
 const O: bool = false; // allow unescaped
