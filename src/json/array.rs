@@ -1,6 +1,7 @@
 use std::iter::FromIterator;
-use std::mem;
+use std::mem::ManuallyDrop;
 use std::ops::{Deref, DerefMut};
+use std::ptr;
 
 use crate::json::{drop, Value};
 
@@ -16,11 +17,10 @@ impl Drop for Array {
     }
 }
 
-fn take(mut array: Array) -> Vec<Value> {
+fn take(array: Array) -> Vec<Value> {
+    let array = ManuallyDrop::new(array);
     unsafe {
-        let inner = mem::replace(&mut array.inner, mem::uninitialized());
-        mem::forget(array);
-        inner
+        ptr::read(&array.inner)
     }
 }
 

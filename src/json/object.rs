@@ -1,8 +1,9 @@
 use std::borrow::Cow;
 use std::collections::{btree_map, BTreeMap};
 use std::iter::FromIterator;
-use std::mem;
+use std::mem::{self, ManuallyDrop};
 use std::ops::{Deref, DerefMut};
+use std::ptr;
 
 use crate::json::{drop, Value};
 use crate::private;
@@ -22,11 +23,10 @@ impl Drop for Object {
     }
 }
 
-fn take(mut object: Object) -> BTreeMap<String, Value> {
+fn take(object: Object) -> BTreeMap<String, Value> {
+    let object = ManuallyDrop::new(object);
     unsafe {
-        let inner = mem::replace(&mut object.inner, mem::uninitialized());
-        mem::forget(object);
-        inner
+        ptr::read(&object.inner)
     }
 }
 
