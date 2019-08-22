@@ -1,12 +1,11 @@
-use syn::{Field, Lit, Meta, NestedMeta};
+use syn::{Attribute, Lit, Meta, Field, NestedMeta, Variant};
 
-pub fn name_of_field(field: &Field) -> String {
-    let mut rename = None;
-
-    for attr in &field.attrs {
+/// Find the value of a #[serde(rename = "xxx")] attribute.
+fn find_rename_attr(attrs: &[Attribute]) -> Option<String> {
+    for attr in attrs {
         let segments = &attr.path.segments;
         if !(segments.len() == 1 && segments[0].ident == "serde") {
-            continue;
+            return None;
         }
 
         let list = match attr.parse_meta() {
@@ -16,16 +15,26 @@ pub fn name_of_field(field: &Field) -> String {
 
         for meta in list.nested {
             if let NestedMeta::Meta(Meta::NameValue(value)) = meta {
-                if value.path.is_ident("rename") && rename.is_none() {
+                if value.path.is_ident("rename") {
                     if let Lit::Str(s) = value.lit {
-                        rename = Some(s.value());
-                        continue;
+                        return Some(s.value());
                     }
                 }
             }
             panic!("unsupported attribute");
         }
     }
+    None
+}
 
-    rename.unwrap_or_else(|| field.ident.as_ref().unwrap().to_string())
+/// Determine the name of a field, respecting a rename attribute.
+pub fn name_of_field(field: &Field) -> String {
+    find_rename_attr(&field.attrs)
+        .unwrap_or_else(|| field.ident.as_ref().unwrap().to_string())
+}
+
+/// Determine the name of a variant, respecting a rename attribute.
+pub fn name_of_variant(var: &Variant) -> String {
+    find_rename_attr(&var.attrs)
+        .unwrap_or_else(|| var.ident.to_string())
 }
