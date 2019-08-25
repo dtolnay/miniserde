@@ -19,9 +19,7 @@ impl Drop for Array {
 
 fn take(array: Array) -> Vec<Value> {
     let array = ManuallyDrop::new(array);
-    unsafe {
-        ptr::read(&array.inner)
-    }
+    unsafe { ptr::read(&array.inner) }
 }
 
 impl Array {

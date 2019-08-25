@@ -2,7 +2,7 @@ use crate::{attr, bound};
 use proc_macro::TokenStream;
 use proc_macro2::Span;
 use quote::quote;
-use syn::{parse_quote, Data, DataStruct, DeriveInput, Fields, FieldsNamed, Ident, DataEnum};
+use syn::{parse_quote, Data, DataEnum, DataStruct, DeriveInput, Fields, FieldsNamed, Ident};
 
 pub fn derive(input: DeriveInput) -> TokenStream {
     match &input.data {
@@ -81,9 +81,9 @@ fn derive_enum(input: &DeriveInput, _enum: &DataEnum) -> TokenStream {
 
     let var_idents = _enum.variants.iter().map(|variant| {
         match variant.fields {
-            Fields::Unit => {},
+            Fields::Unit => {}
             _ => panic!(
-                "Invalid variant {}:  only simple enum variants without fields are supported", 
+                "Invalid variant {}:  only simple enum variants without fields are supported",
                 variant.ident,
             ),
         }

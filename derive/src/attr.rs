@@ -1,4 +1,4 @@
-use syn::{Attribute, Lit, Meta, Field, NestedMeta, Variant};
+use syn::{Attribute, Field, Lit, Meta, NestedMeta, Variant};
 
 /// Find the value of a #[serde(rename = "xxx")] attribute.
 fn find_rename_attr(attrs: &[Attribute]) -> Option<String> {
@@ -29,12 +29,10 @@ fn find_rename_attr(attrs: &[Attribute]) -> Option<String> {
 
 /// Determine the name of a field, respecting a rename attribute.
 pub fn name_of_field(field: &Field) -> String {
-    find_rename_attr(&field.attrs)
-        .unwrap_or_else(|| field.ident.as_ref().unwrap().to_string())
+    find_rename_attr(&field.attrs).unwrap_or_else(|| field.ident.as_ref().unwrap().to_string())
 }
 
 /// Determine the name of a variant, respecting a rename attribute.
 pub fn name_of_variant(var: &Variant) -> String {
-    find_rename_attr(&var.attrs)
-        .unwrap_or_else(|| var.ident.to_string())
+    find_rename_attr(&var.attrs).unwrap_or_else(|| var.ident.to_string())
 }

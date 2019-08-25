@@ -25,9 +25,7 @@ impl Drop for Object {
 
 fn take(object: Object) -> BTreeMap<String, Value> {
     let object = ManuallyDrop::new(object);
-    unsafe {
-        ptr::read(&object.inner)
-    }
+    unsafe { ptr::read(&object.inner) }
 }
 
 impl Object {
