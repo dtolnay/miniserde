@@ -126,10 +126,10 @@
 //! impls. If you need any of this, use Serde -- it's a great library.
 
 #![doc(html_root_url = "https://docs.rs/miniserde/0.1.11")]
-#![cfg_attr(feature = "cargo-clippy", allow(renamed_and_removed_lints))]
-#![cfg_attr(
-    feature = "cargo-clippy",
-    allow(cast_lossless, enum_variant_names, transmute_ptr_to_ptr)
+#![allow(
+    clippy::cast_lossless,
+    clippy::enum_variant_names,
+    clippy::transmute_ptr_to_ptr
 )]
 
 #[doc(hidden)]

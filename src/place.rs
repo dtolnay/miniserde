@@ -31,7 +31,7 @@ macro_rules! make_place {
         }
 
         impl<__T> $name<__T> {
-            #[cfg_attr(feature = "cargo-clippy", allow(new_ret_no_self))]
+            #[allow(clippy::new_ret_no_self)]
             fn new(out: &mut $crate::export::Option<__T>) -> &mut Self {
                 unsafe { &mut *{ out as *mut $crate::export::Option<__T> as *mut $name<__T> } }
             }
