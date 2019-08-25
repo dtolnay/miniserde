@@ -2,18 +2,21 @@ use crate::{attr, bound};
 use proc_macro::TokenStream;
 use proc_macro2::Span;
 use quote::quote;
-use syn::{parse_quote, Data, DataStruct, DeriveInput, Fields, Ident};
+use syn::{parse_quote, Data, DataStruct, DataEnum, DeriveInput, Fields, FieldsNamed, Ident};
 
 pub fn derive(input: DeriveInput) -> TokenStream {
-    let fields = match input.data {
+    match &input.data {
         Data::Struct(DataStruct {
-            fields: Fields::Named(fields),
+            fields: Fields::Named(ref fields),
             ..
-        }) => fields,
+        }) => derive_struct(&input, fields),
+        Data::Enum(ref _enum) => derive_enum(&input, _enum),
         _ => panic!("currently only structs with named fields are supported"),
-    };
+    }
+}
 
-    let ident = input.ident;
+pub fn derive_struct(input: &DeriveInput, fields: &FieldsNamed) -> TokenStream {
+    let ident = &input.ident;
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
     let dummy = Ident::new(
         &format!("_IMPL_MINIDESERIALIZE_FOR_{}", ident),
@@ -88,6 +91,63 @@ pub fn derive(input: DeriveInput) -> TokenStream {
                         )*
                     });
                     miniserde::export::Ok(())
+                }
+            }
+        };
+    })
+}
+
+pub fn derive_enum(input: &DeriveInput, _enum: &DataEnum) -> TokenStream {
+    if input.generics.lt_token.is_some() || input.generics.where_clause.is_some() {
+        panic!("Enums with generics are not supported");
+    }
+
+    let ident = &input.ident;
+    let dummy = Ident::new(
+        &format!("_IMPL_MINIDESERIALIZE_FOR_{}", ident),
+        Span::call_site(),
+    );
+
+    let var_idents = _enum.variants.iter().map(|variant| {
+        match variant.fields {
+            Fields::Unit => {},
+            _ => panic!(
+                "Invalid variant {}:  only simple enum variants without fields are supported", 
+                variant.ident,
+            ),
+        }
+        &variant.ident
+    });
+    let names = _enum.variants.iter().map(attr::name_of_variant);
+
+    TokenStream::from(quote! {
+        #[allow(non_upper_case_globals)]
+        const #dummy: () = {
+            #[repr(C)]
+            struct __Visitor {
+                __out: miniserde::export::Option<#ident>,
+            }
+
+            impl miniserde::Deserialize for #ident {
+                fn begin(__out: &mut miniserde::export::Option<Self>) -> &mut dyn miniserde::de::Visitor {
+                    unsafe {
+                        &mut *{
+                            __out
+                            as *mut miniserde::export::Option<Self>
+                            as *mut __Visitor
+                        }
+                    }
+                }
+            }
+
+            impl miniserde::de::Visitor for __Visitor {
+                fn string(&mut self, s: &str) -> miniserde::Result<()> {
+                    let value = match s {
+                        #( #names => #ident::#var_idents, )*
+                        _ => { return Err(miniserde::Error) },
+                    };
+                    self.__out = Some(value);
+                    Ok(())
                 }
             }
         };
