@@ -2,6 +2,8 @@ use syn::{Attribute, Error, Field, Lit, Meta, NestedMeta, Result, Variant};
 
 /// Find the value of a #[serde(rename = "...")] attribute.
 fn attr_rename(attrs: &[Attribute]) -> Result<Option<String>> {
+    let mut rename = None;
+
     for attr in attrs {
         if !attr.path.is_ident("serde") {
             continue;
@@ -16,14 +18,19 @@ fn attr_rename(attrs: &[Attribute]) -> Result<Option<String>> {
             if let NestedMeta::Meta(Meta::NameValue(value)) = meta {
                 if value.path.is_ident("rename") {
                     if let Lit::Str(s) = &value.lit {
-                        return Ok(Some(s.value()));
+                        if rename.is_some() {
+                            return Err(Error::new_spanned(meta, "duplicate rename attribute"));
+                        }
+                        rename = Some(s.value());
+                        continue;
                     }
                 }
             }
             return Err(Error::new_spanned(meta, "unsupported attribute"));
         }
     }
-    Ok(None)
+
+    Ok(rename)
 }
 
 /// Determine the name of a field, respecting a rename attribute.
