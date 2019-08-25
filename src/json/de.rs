@@ -235,7 +235,7 @@ impl<'a, 'b> Deserializer<'a, 'b> {
         self.buffer.clear();
 
         loop {
-            while self.pos < self.input.len() && !ESCAPE[self.input[self.pos] as usize] {
+            while self.pos < self.input.len() && !ESCAPE[usize::from(self.input[self.pos])] {
                 self.pos += 1;
             }
             if self.pos == self.input.len() {
@@ -308,7 +308,7 @@ impl<'a, 'b> Deserializer<'a, 'b> {
                             return Err(Error);
                         }
 
-                        let n = (((n1 - 0xD800) as u32) << 10 | (n2 - 0xDC00) as u32) + 0x1_0000;
+                        let n = (u32::from(n1 - 0xD800) << 10 | u32::from(n2 - 0xDC00)) + 0x1_0000;
 
                         match char::from_u32(n) {
                             Some(c) => c,
@@ -318,7 +318,7 @@ impl<'a, 'b> Deserializer<'a, 'b> {
                         }
                     }
 
-                    n => match char::from_u32(n as u32) {
+                    n => match char::from_u32(u32::from(n)) {
                         Some(c) => c,
                         None => {
                             return Err(Error);
@@ -341,7 +341,7 @@ impl<'a, 'b> Deserializer<'a, 'b> {
         let mut n = 0;
         for _ in 0..4 {
             n = match self.next_or_eof()? {
-                c @ b'0'..=b'9' => n * 16_u16 + ((c as u16) - (b'0' as u16)),
+                c @ b'0'..=b'9' => n * 16_u16 + u16::from(c - b'0'),
                 b'a' | b'A' => n * 16_u16 + 10_u16,
                 b'b' | b'B' => n * 16_u16 + 11_u16,
                 b'c' | b'C' => n * 16_u16 + 12_u16,
@@ -395,13 +395,13 @@ impl<'a, 'b> Deserializer<'a, 'b> {
                 }
             }
             c @ b'1'..=b'9' => {
-                let mut res = (c - b'0') as u64;
+                let mut res = u64::from(c - b'0');
 
                 loop {
                     match self.peek_or_nul() {
                         c @ b'0'..=b'9' => {
                             self.bump();
-                            let digit = (c - b'0') as u64;
+                            let digit = u64::from(c - b'0');
 
                             // We need to be careful with overflow. If we can, try to keep the
                             // number as a `u64` until we grow too large. At that point, switch to
@@ -487,7 +487,7 @@ impl<'a, 'b> Deserializer<'a, 'b> {
         let mut at_least_one_digit = false;
         while let c @ b'0'..=b'9' = self.peek_or_nul() {
             self.bump();
-            let digit = (c - b'0') as u64;
+            let digit = u64::from(c - b'0');
             at_least_one_digit = true;
 
             if overflow!(significand * 10 + digit, u64::max_value()) {
@@ -535,7 +535,7 @@ impl<'a, 'b> Deserializer<'a, 'b> {
 
         // Make sure a digit follows the exponent place.
         let mut exp = match self.next_or_nul() {
-            c @ b'0'..=b'9' => (c - b'0') as i32,
+            c @ b'0'..=b'9' => i32::from(c - b'0'),
             _ => {
                 return Err(Error);
             }
@@ -543,7 +543,7 @@ impl<'a, 'b> Deserializer<'a, 'b> {
 
         while let c @ b'0'..=b'9' = self.peek_or_nul() {
             self.bump();
-            let digit = (c - b'0') as i32;
+            let digit = i32::from(c - b'0');
 
             if overflow!(exp * 10 + digit, i32::max_value()) {
                 return self.parse_exponent_overflow(nonnegative, significand, positive_exp);

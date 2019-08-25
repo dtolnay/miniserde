@@ -126,11 +126,6 @@
 //! impls. If you need any of this, use Serde -- it's a great library.
 
 #![doc(html_root_url = "https://docs.rs/miniserde/0.1.11")]
-#![allow(
-    clippy::cast_lossless,
-    clippy::enum_variant_names,
-    clippy::transmute_ptr_to_ptr
-)]
 
 #[doc(hidden)]
 pub use mini_internal::*;
