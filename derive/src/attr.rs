@@ -3,8 +3,7 @@ use syn::{Attribute, Error, Field, Lit, Meta, NestedMeta, Result, Variant};
 /// Find the value of a #[serde(rename = "xxx")] attribute.
 fn find_rename_attr(attrs: &[Attribute]) -> Result<Option<String>> {
     for attr in attrs {
-        let segments = &attr.path.segments;
-        if !(segments.len() == 1 && segments[0].ident == "serde") {
+        if !attr.path.is_ident("serde") {
             continue;
         }
 
