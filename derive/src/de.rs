@@ -157,13 +157,13 @@ pub fn derive_enum(input: &DeriveInput, enumeration: &DataEnum) -> Result<TokenS
             }
 
             impl miniserde::de::Visitor for __Visitor {
-                fn string(&mut self, s: &str) -> miniserde::Result<()> {
+                fn string(&mut self, s: &miniserde::export::str) -> miniserde::Result<()> {
                     let value = match s {
                         #( #names => #ident::#var_idents, )*
-                        _ => { return Err(miniserde::Error) },
+                        _ => { return miniserde::export::Err(miniserde::Error) },
                     };
-                    self.__out = Some(value);
-                    Ok(())
+                    self.__out = miniserde::export::Some(value);
+                    miniserde::export::Ok(())
                 }
             }
         };
