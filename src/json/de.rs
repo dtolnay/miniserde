@@ -122,8 +122,8 @@ fn from_str_impl(j: &str, mut visitor: &mut dyn Visitor) -> Result<()> {
                 close @ b']' | close @ b'}' => {
                     de.bump();
                     match &mut layer {
-                        Layer::Seq(ref mut seq) if close == b']' => seq.finish()?,
-                        Layer::Map(ref mut map) if close == b'}' => map.finish()?,
+                        Layer::Seq(seq) if close == b']' => seq.finish()?,
+                        Layer::Map(map) if close == b'}' => map.finish()?,
                         _ => return Err(Error),
                     };
                     let frame = match de.stack.pop() {

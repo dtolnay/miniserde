@@ -17,11 +17,11 @@ pub fn with_lifetime_bound(generics: &Generics, lifetime: &str) -> Generics {
     let params = Some(GenericParam::Lifetime(def))
         .into_iter()
         .chain(generics.params.iter().cloned().map(|mut param| {
-            match param {
-                GenericParam::Lifetime(ref mut param) => {
+            match &mut param {
+                GenericParam::Lifetime(param) => {
                     param.bounds.push(bound.clone());
                 }
-                GenericParam::Type(ref mut param) => {
+                GenericParam::Type(param) => {
                     param.bounds.push(TypeParamBound::Lifetime(bound.clone()));
                 }
                 GenericParam::Const(_) => {}

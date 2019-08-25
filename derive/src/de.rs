@@ -8,10 +8,10 @@ use syn::{
 pub fn derive(input: DeriveInput) -> Result<TokenStream> {
     match &input.data {
         Data::Struct(DataStruct {
-            fields: Fields::Named(ref fields),
+            fields: Fields::Named(fields),
             ..
         }) => derive_struct(&input, fields),
-        Data::Enum(ref _enum) => derive_enum(&input, _enum),
+        Data::Enum(_enum) => derive_enum(&input, _enum),
         _ => Err(Error::new(
             Span::call_site(),
             "currently only structs with named fields are supported",
