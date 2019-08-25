@@ -11,7 +11,7 @@ pub fn derive(input: DeriveInput) -> Result<TokenStream> {
             fields: Fields::Named(fields),
             ..
         }) => derive_struct(&input, fields),
-        Data::Enum(_enum) => derive_enum(&input, _enum),
+        Data::Enum(enumeration) => derive_enum(&input, enumeration),
         _ => Err(Error::new(
             Span::call_site(),
             "currently only structs with named fields are supported",
@@ -105,7 +105,7 @@ pub fn derive_struct(input: &DeriveInput, fields: &FieldsNamed) -> Result<TokenS
     })
 }
 
-pub fn derive_enum(input: &DeriveInput, _enum: &DataEnum) -> Result<TokenStream> {
+pub fn derive_enum(input: &DeriveInput, enumeration: &DataEnum) -> Result<TokenStream> {
     if input.generics.lt_token.is_some() || input.generics.where_clause.is_some() {
         return Err(Error::new(
             Span::call_site(),
@@ -119,7 +119,7 @@ pub fn derive_enum(input: &DeriveInput, _enum: &DataEnum) -> Result<TokenStream>
         Span::call_site(),
     );
 
-    let var_idents = _enum
+    let var_idents = enumeration
         .variants
         .iter()
         .map(|variant| match variant.fields {
@@ -130,7 +130,7 @@ pub fn derive_enum(input: &DeriveInput, _enum: &DataEnum) -> Result<TokenStream>
             )),
         })
         .collect::<Result<Vec<_>>>()?;
-    let names = _enum
+    let names = enumeration
         .variants
         .iter()
         .map(attr::name_of_variant)
