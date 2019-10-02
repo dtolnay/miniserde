@@ -27,8 +27,7 @@ pub fn derive_struct(input: &DeriveInput, fields: &FieldsNamed) -> Result<TokenS
         Span::call_site(),
     );
 
-    let fieldname = &fields.named.iter().map(|f| &f.ident).collect::<Vec<_>>();
-    let fieldname2 = fieldname;
+    let fieldname = fields.named.iter().map(|f| &f.ident).collect::<Vec<_>>();
     let fieldty = fields.named.iter().map(|f| &f.ty);
     let fieldstr = fields
         .named
@@ -83,7 +82,7 @@ pub fn derive_struct(input: &DeriveInput, fields: &FieldsNamed) -> Result<TokenS
                 fn key(&mut self, __k: &miniserde::export::str) -> miniserde::Result<&mut dyn miniserde::de::Visitor> {
                     match __k {
                         #(
-                            #fieldstr => miniserde::export::Ok(miniserde::Deserialize::begin(&mut self.#fieldname2)),
+                            #fieldstr => miniserde::export::Ok(miniserde::Deserialize::begin(&mut self.#fieldname)),
                         )*
                         _ => miniserde::export::Ok(miniserde::de::Visitor::ignore()),
                     }
@@ -91,7 +90,7 @@ pub fn derive_struct(input: &DeriveInput, fields: &FieldsNamed) -> Result<TokenS
 
                 fn finish(&mut self) -> miniserde::Result<()> {
                     #(
-                        let #fieldname = self.#fieldname2.take().ok_or(miniserde::Error)?;
+                        let #fieldname = self.#fieldname.take().ok_or(miniserde::Error)?;
                     )*
                     *self.__out = miniserde::export::Some(#ident {
                         #(
