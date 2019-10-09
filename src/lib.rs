@@ -126,6 +126,7 @@
 //! impls. If you need any of this, use Serde -- it's a great library.
 
 #![doc(html_root_url = "https://docs.rs/miniserde/0.1.12")]
+#![allow(clippy::needless_doctest_main)]
 
 #[doc(hidden)]
 pub use mini_internal::*;

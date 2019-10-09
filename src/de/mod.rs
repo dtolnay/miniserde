@@ -51,8 +51,6 @@
 //!         Place::new(out)
 //!     }
 //! }
-//! #
-//! # fn main() {}
 //! ```
 //!
 //! ## Deserializing a sequence
@@ -113,8 +111,6 @@
 //!         Place::new(out)
 //!     }
 //! }
-//! #
-//! # fn main() {}
 //! ```
 //!
 //! ## Deserializing a map or struct
@@ -184,8 +180,6 @@
 //!         Place::new(out)
 //!     }
 //! }
-//! #
-//! # fn main() {}
 //! ```
 
 mod impls;
@@ -211,8 +205,6 @@ pub trait Deserialize: Sized {
     ///     Place::new(out)
     /// }
     /// # }
-    /// #
-    /// # fn main() {}
     /// ```
     fn begin(out: &mut Option<Self>) -> &mut dyn Visitor;
 
