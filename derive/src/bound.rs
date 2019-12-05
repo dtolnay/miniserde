@@ -31,7 +31,7 @@ pub fn with_lifetime_bound(generics: &Generics, lifetime: &str) -> Generics {
         .collect();
 
     Generics {
-        params: params,
+        params,
         ..generics.clone()
     }
 }
