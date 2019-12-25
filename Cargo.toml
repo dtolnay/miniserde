@@ -9,6 +9,9 @@ documentation = "https://docs.rs/miniserde"
 readme = "README.md"
 edition = "2018"
 
+[badges]
+travis-ci = { repository = "dtolnay/miniserde" }
+
 [dependencies]
 itoa = "0.4.3"
 mini-internal = { version = "=0.1.12", path = "derive" }
