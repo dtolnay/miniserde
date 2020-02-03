@@ -1,8 +1,5 @@
 use std::borrow::Cow;
 
-use itoa;
-use ryu;
-
 use crate::ser::{Fragment, Map, Seq, Serialize};
 
 /// Serialize any serializable type into a JSON string.

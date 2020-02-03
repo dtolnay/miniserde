@@ -1,4 +1,3 @@
-use std;
 use std::fmt::{self, Display};
 
 /// Error type when deserialization fails.
