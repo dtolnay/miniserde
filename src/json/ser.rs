@@ -125,6 +125,8 @@ fn to_string_impl(value: &dyn Serialize) -> String {
     }
 }
 
+// Clippy false positive: https://github.com/rust-lang/rust-clippy/issues/5169
+#[allow(clippy::zero_prefixed_literal)]
 fn escape_str(value: &str, out: &mut String) {
     out.push('"');
 
