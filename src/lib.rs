@@ -128,6 +128,10 @@
 #![doc(html_root_url = "https://docs.rs/miniserde/0.1.12")]
 #![allow(clippy::needless_doctest_main)]
 
+// Regression causing false positives:
+// https://github.com/rust-lang/rust-clippy/issues/5343
+#![allow(clippy::useless_transmute)]
+
 #[doc(hidden)]
 pub use mini_internal::*;
 
