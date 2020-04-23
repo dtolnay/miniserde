@@ -13,8 +13,12 @@ matrix:
       script:
         - cargo update -Z minimal-versions
         - cargo check
-    - rust: nightly
-      name: Clippy
+    - name: Clippy
+      install:
+        - CLIPPY_NIGHTLY=nightly-$(curl -s https://rust-lang.github.io/rustup-components-history/x86_64-unknown-linux-gnu/clippy)
+        - echo "Latest nightly with Clippy is $CLIPPY_NIGHTLY"
+        - rustup set profile minimal
+        - rustup default "$CLIPPY_NIGHTLY"
+        - rustup component add clippy
       script:
-        - rustup component add clippy || travis_terminate 0
         - cargo clippy --tests -- -D clippy::all
