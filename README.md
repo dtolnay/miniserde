@@ -1,7 +1,7 @@
 Miniserde
 =========
 
-[![Build Status](https://api.travis-ci.org/dtolnay/miniserde.svg?branch=master)](https://travis-ci.org/dtolnay/miniserde)
+[![Build Status](https://img.shields.io/github/workflow/status/dtolnay/miniserde/CI/master)](https://github.com/dtolnay/miniserde/actions?query=branch%3Amaster)
 [![Latest Version](https://img.shields.io/crates/v/miniserde.svg)](https://crates.io/crates/miniserde)
 [![Rust Documentation](https://img.shields.io/badge/api-rustdoc-blue.svg)](https://docs.rs/miniserde)
 
