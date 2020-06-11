@@ -134,11 +134,14 @@
 //! impls. If you need any of this, use Serde -- it's a great library.
 
 #![doc(html_root_url = "https://docs.rs/miniserde/0.1.12")]
-#![allow(clippy::needless_doctest_main)]
-
-// Regression causing false positives:
-// https://github.com/rust-lang/rust-clippy/issues/5343
-#![allow(clippy::useless_transmute)]
+#![allow(
+    clippy::needless_doctest_main,
+    // Regression causing false positives:
+    // https://github.com/rust-lang/rust-clippy/issues/5343
+    clippy::useless_transmute,
+    // Clippy bug: https://github.com/rust-lang/rust-clippy/issues/5704
+    clippy::unnested_or_patterns,
+)]
 
 #[doc(hidden)]
 pub use mini_internal::*;
