@@ -133,7 +133,7 @@
 //! restricts the kinds of on-the-fly manipulation that are possible in custom
 //! impls. If you need any of this, use Serde -- it's a great library.
 
-#![doc(html_root_url = "https://docs.rs/miniserde/0.1.12")]
+#![doc(html_root_url = "https://docs.rs/miniserde/0.1.13")]
 #![allow(
     clippy::needless_doctest_main,
     // Regression causing false positives:
