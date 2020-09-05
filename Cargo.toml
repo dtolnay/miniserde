@@ -15,7 +15,7 @@ mini-internal = { version = "=0.1.13", path = "derive" }
 ryu = "1.0"
 
 [dev-dependencies]
-automod = "0.1"
+automod = "0.2"
 serde = "1.0"
 serde_derive = "1.0"
 serde_json = "1.0"
