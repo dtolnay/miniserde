@@ -141,6 +141,8 @@
     clippy::useless_transmute,
     // Clippy bug: https://github.com/rust-lang/rust-clippy/issues/5704
     clippy::unnested_or_patterns,
+    // We support older compilers.
+    clippy::manual_range_contains,
 )]
 
 #[doc(hidden)]
