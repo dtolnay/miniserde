@@ -143,6 +143,18 @@
     clippy::unnested_or_patterns,
     // We support older compilers.
     clippy::manual_range_contains,
+    // Pedantic.
+    clippy::cast_possible_wrap,
+    clippy::cast_precision_loss,
+    clippy::checked_conversions,
+    clippy::doc_markdown,
+    clippy::enum_glob_use,
+    clippy::missing_errors_doc,
+    clippy::must_use_candidate,
+    clippy::redundant_else,
+    clippy::shadow_unrelated,
+    clippy::single_match_else,
+    clippy::too_many_lines,
 )]
 
 #[doc(hidden)]

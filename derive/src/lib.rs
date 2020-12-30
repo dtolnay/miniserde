@@ -1,3 +1,9 @@
+#![allow(
+    clippy::module_name_repetitions,
+    clippy::needless_pass_by_value,
+    clippy::unseparated_literal_suffix
+)]
+
 extern crate proc_macro;
 
 mod attr;
