@@ -168,7 +168,8 @@ pub use mini_internal::{Deserialize as MiniDeserialize, Serialize as MiniSeriali
 
 // Not public API.
 #[doc(hidden)]
-pub mod export;
+#[path = "export.rs"]
+pub mod __private;
 
 #[macro_use]
 mod careful;

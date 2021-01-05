@@ -45,7 +45,7 @@ fn derive_struct(input: &DeriveInput, fields: &FieldsNamed) -> Result<TokenStrea
         const #dummy: () = {
             impl #impl_generics miniserde::Serialize for #ident #ty_generics #bounded_where_clause {
                 fn begin(&self) -> miniserde::ser::Fragment {
-                    miniserde::ser::Fragment::Map(miniserde::export::Box::new(__Map {
+                    miniserde::ser::Fragment::Map(miniserde::__private::Box::new(__Map {
                         data: self,
                         state: 0,
                     }))
@@ -54,21 +54,21 @@ fn derive_struct(input: &DeriveInput, fields: &FieldsNamed) -> Result<TokenStrea
 
             struct __Map #wrapper_impl_generics #where_clause {
                 data: &'__a #ident #ty_generics,
-                state: miniserde::export::usize,
+                state: miniserde::__private::usize,
             }
 
             impl #wrapper_impl_generics miniserde::ser::Map for __Map #wrapper_ty_generics #bounded_where_clause {
-                fn next(&mut self) -> miniserde::export::Option<(miniserde::export::Cow<miniserde::export::str>, &dyn miniserde::Serialize)> {
+                fn next(&mut self) -> miniserde::__private::Option<(miniserde::__private::Cow<miniserde::__private::str>, &dyn miniserde::Serialize)> {
                     let __state = self.state;
                     self.state = __state + 1;
                     match __state {
                         #(
-                            #index => miniserde::export::Some((
-                                miniserde::export::Cow::Borrowed(#fieldstr),
+                            #index => miniserde::__private::Some((
+                                miniserde::__private::Cow::Borrowed(#fieldstr),
                                 &self.data.#fieldname,
                             )),
                         )*
-                        _ => miniserde::export::None,
+                        _ => miniserde::__private::None,
                     }
                 }
             }
@@ -115,7 +115,7 @@ fn derive_enum(input: &DeriveInput, enumeration: &DataEnum) -> Result<TokenStrea
                     match self {
                         #(
                             #ident::#var_idents => {
-                                miniserde::ser::Fragment::Str(miniserde::export::Cow::Borrowed(#names))
+                                miniserde::ser::Fragment::Str(miniserde::__private::Cow::Borrowed(#names))
                             }
                         )*
                     }
