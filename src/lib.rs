@@ -136,6 +136,7 @@
 #![doc(html_root_url = "https://docs.rs/miniserde/0.1.13")]
 #![allow(
     clippy::needless_doctest_main,
+    clippy::vec_init_then_push,
     // Regression causing false positives:
     // https://github.com/rust-lang/rust-clippy/issues/5343
     clippy::useless_transmute,
