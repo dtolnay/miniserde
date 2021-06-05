@@ -45,7 +45,7 @@ impl Visitor for Ignore {
 
 impl Seq for Ignore {
     fn element(&mut self) -> Result<&mut dyn Visitor> {
-        Ok(Visitor::ignore())
+        Ok(<dyn Visitor>::ignore())
     }
 
     fn finish(&mut self) -> Result<()> {
@@ -55,7 +55,7 @@ impl Seq for Ignore {
 
 impl Map for Ignore {
     fn key(&mut self, _k: &str) -> Result<&mut dyn Visitor> {
-        Ok(Visitor::ignore())
+        Ok(<dyn Visitor>::ignore())
     }
 
     fn finish(&mut self) -> Result<()> {
