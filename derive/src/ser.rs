@@ -10,7 +10,7 @@ pub fn derive(input: DeriveInput) -> Result<TokenStream> {
         Data::Struct(DataStruct {
             fields: Fields::Named(fields),
             ..
-        }) => derive_struct(&input, &fields),
+        }) => derive_struct(&input, fields),
         Data::Enum(enumeration) => derive_enum(&input, enumeration),
         _ => Err(Error::new(
             Span::call_site(),
