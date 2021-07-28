@@ -1,4 +1,4 @@
-use crate::lib::*;
+use crate::lib::{btree_map, slice, str, BTreeMap, Box, Cow, String, ToOwned, ToString, Vec};
 
 #[cfg(feature = "std")]
 use std::collections::{hash_map, HashMap};

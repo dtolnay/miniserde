@@ -1,10 +1,10 @@
 #[cfg(feature = "std")]
-use std::collections::HashMap;
-#[cfg(feature = "std")]
 use crate::lib::hash::{BuildHasher, Hash};
 use crate::lib::mem;
 use crate::lib::str::FromStr;
-use crate::lib::*;
+use crate::lib::{str, BTreeMap, Box, Default, String, ToOwned, Vec};
+#[cfg(feature = "std")]
+use std::collections::HashMap;
 
 use crate::de::{Deserialize, Map, Seq, Visitor};
 use crate::error::{Error, Result};

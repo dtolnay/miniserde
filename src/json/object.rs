@@ -2,8 +2,8 @@ use crate::lib::iter::FromIterator;
 use crate::lib::mem::{self, ManuallyDrop};
 use crate::lib::ops::{Deref, DerefMut};
 use crate::lib::Cow;
-use crate::lib::*;
 use crate::lib::{btree_map, BTreeMap};
+use crate::lib::{str, Box, Clone, Debug, Default, String};
 #[cfg(not(feature = "std"))]
 use core::ptr;
 #[cfg(feature = "std")]

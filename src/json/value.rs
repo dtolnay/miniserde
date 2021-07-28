@@ -1,4 +1,4 @@
-use crate::lib::*;
+use crate::lib::{mem, str, Box, Clone, Cow, Debug, Default, String, ToOwned};
 
 use crate::de::{Deserialize, Map, Seq, Visitor};
 use crate::error::Result;
