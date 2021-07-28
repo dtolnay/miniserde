@@ -1,12 +1,5 @@
-#[cfg(not(feature = "std"))]
-pub use alloc::borrow::Cow;
-#[cfg(feature = "std")]
-pub use std::borrow::Cow;
-
-#[cfg(not(feature = "std"))]
-pub use alloc::boxed::Box;
-#[cfg(feature = "std")]
-pub use std::boxed::Box;
+pub use crate::lib::Box;
+pub use crate::lib::Cow;
 
 #[cfg(not(feature = "std"))]
 pub use core::option::Option::{self, None, Some};
@@ -18,10 +11,7 @@ pub use core::result::Result::{Err, Ok};
 #[cfg(feature = "std")]
 pub use std::result::Result::{Err, Ok};
 
-#[cfg(not(feature = "std"))]
-pub use alloc::string::String;
-#[cfg(feature = "std")]
-pub use std::string::String;
+pub use crate::lib::String;
 
 pub use self::help::Str as str;
 pub use self::help::Usize as usize;
