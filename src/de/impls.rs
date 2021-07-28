@@ -2,7 +2,9 @@
 use crate::lib::hash::{BuildHasher, Hash};
 use crate::lib::mem;
 use crate::lib::str::FromStr;
-use crate::lib::{str, BTreeMap, Box, Default, String, ToOwned, Vec};
+#[cfg(feature = "std")]
+use crate::lib::Default;
+use crate::lib::{str, BTreeMap, Box, String, ToOwned, Vec};
 #[cfg(feature = "std")]
 use std::collections::HashMap;
 
