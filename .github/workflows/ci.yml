@@ -19,6 +19,7 @@ jobs:
         with:
           toolchain: ${{matrix.rust}}
       - run: cargo test
+      - run: cargo test --no-default-features
 
   msrv:
     name: Rust 1.31.0

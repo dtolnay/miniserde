@@ -1,4 +1,4 @@
-use std::borrow::Cow;
+use crate::lib::{Box, Cow, String, Vec};
 
 use crate::ser::{Fragment, Map, Seq, Serialize};
 
