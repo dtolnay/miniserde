@@ -1,7 +1,9 @@
-use std::borrow::Cow;
-use std::collections::{btree_map, hash_map, BTreeMap, HashMap};
+use crate::lib::*;
+
+#[cfg(feature = "std")]
+use std::collections::{hash_map, HashMap};
+#[cfg(feature = "std")]
 use std::hash::{BuildHasher, Hash};
-use std::slice;
 
 use crate::private;
 use crate::ser::{Fragment, Map, Seq, Serialize};
@@ -139,6 +141,7 @@ impl<T: Serialize> Serialize for Vec<T> {
     }
 }
 
+#[cfg(feature = "std")]
 impl<K, V, H> Serialize for HashMap<K, V, H>
 where
     K: Hash + Eq + ToString,

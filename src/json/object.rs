@@ -1,8 +1,12 @@
-use std::borrow::Cow;
-use std::collections::{btree_map, BTreeMap};
-use std::iter::FromIterator;
-use std::mem::{self, ManuallyDrop};
-use std::ops::{Deref, DerefMut};
+use crate::lib::iter::FromIterator;
+use crate::lib::mem::{self, ManuallyDrop};
+use crate::lib::ops::{Deref, DerefMut};
+use crate::lib::Cow;
+use crate::lib::*;
+use crate::lib::{btree_map, BTreeMap};
+#[cfg(not(feature = "std"))]
+use core::ptr;
+#[cfg(feature = "std")]
 use std::ptr;
 
 use crate::json::{drop, Value};

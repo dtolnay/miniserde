@@ -22,7 +22,7 @@ macro_rules! careful {
 macro_rules! careful_impl {
     (($($expr:tt)*) as $t:ty) => {{
         let expr = $($expr)*;
-        unsafe { ::std::mem::transmute::<$t, $t>(expr) }
+        unsafe { $crate::lib::mem::transmute::<$t, $t>(expr) }
     }};
     (($($expr:tt)*) $next:tt $($rest:tt)*) => {
         careful_impl!(($($expr)* $next) $($rest)*)

@@ -185,6 +185,7 @@
 mod impls;
 
 use crate::error::{Error, Result};
+use crate::lib::Box;
 
 /// Trait for data structures that can be deserialized from a JSON string.
 ///
