@@ -1,0 +1,15 @@
+[package]
+name = "serde_json_test"
+version = "0.0.0"
+edition = "2018"
+publish = false
+
+[lib]
+path = "test.rs"
+
+[dependencies]
+miniserde = { path = "../..", default-features = false }
+
+[features]
+default = ["std"]
+std = ["miniserde/std"]
