@@ -1,6 +1,6 @@
 [package]
 name = "miniserde"
-version = "0.1.15"
+version = "0.1.16"
 authors = ["David Tolnay <dtolnay@gmail.com>"]
 license = "MIT OR Apache-2.0"
 description = "Data structure serialization library with several opposite design goals from Serde."
@@ -12,7 +12,7 @@ rust-version = "1.31"
 
 [dependencies]
 itoa = { version = "0.4.3", default-features = false }
-mini-internal = { version = "=0.1.15", path = "derive" }
+mini-internal = { version = "=0.1.16", path = "derive" }
 ryu = "1.0"
 
 [dev-dependencies]
