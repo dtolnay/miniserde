@@ -160,7 +160,7 @@
 //!         match k {
 //!             "code" => Ok(Deserialize::begin(&mut self.code)),
 //!             "message" => Ok(Deserialize::begin(&mut self.message)),
-//!             _ => Ok(Visitor::ignore()),
+//!             _ => Ok(<dyn Visitor>::ignore()),
 //!         }
 //!     }
 //!
