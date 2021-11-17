@@ -84,7 +84,7 @@ pub fn derive_struct(input: &DeriveInput, fields: &FieldsNamed) -> Result<TokenS
                         #(
                             #fieldstr => miniserde::__private::Ok(miniserde::Deserialize::begin(&mut self.#fieldname)),
                         )*
-                        _ => miniserde::__private::Ok(miniserde::de::Visitor::ignore()),
+                        _ => miniserde::__private::Ok(<dyn miniserde::de::Visitor>::ignore()),
                     }
                 }
 
