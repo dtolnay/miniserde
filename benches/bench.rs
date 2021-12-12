@@ -1,4 +1,5 @@
 #![feature(test)]
+#![allow(clippy::struct_excessive_bools)]
 
 extern crate test;
 
