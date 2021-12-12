@@ -11,7 +11,7 @@ edition = "2018"
 rust-version = "1.36"
 
 [dependencies]
-itoa = { version = "0.4.3", default-features = false }
+itoa = "1.0"
 mini-internal = { version = "=0.1.16", path = "derive" }
 ryu = "1.0"
 
@@ -29,4 +29,4 @@ targets = ["x86_64-unknown-linux-gnu"]
 
 [features]
 default = ["std"]
-std = ["itoa/std"]
+std = []
