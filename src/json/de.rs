@@ -89,11 +89,11 @@ fn from_str_impl(j: &str, mut visitor: &mut dyn Visitor) -> Result<()> {
                 None
             }
             SeqStart => {
-                let seq = careful!(visitor.seq()? as Box<dyn Seq>);
+                let seq = unsafe { extend_lifetime!(visitor.seq()? as Box<dyn Seq>) };
                 Some(Layer::Seq(seq))
             }
             MapStart => {
-                let map = careful!(visitor.map()? as Box<dyn Map>);
+                let map = unsafe { extend_lifetime!(visitor.map()? as Box<dyn Map>) };
                 Some(Layer::Map(map))
             }
         };
@@ -147,7 +147,7 @@ fn from_str_impl(j: &str, mut visitor: &mut dyn Visitor) -> Result<()> {
 
         match layer {
             Layer::Seq(mut seq) => {
-                let inner = careful!(seq.element()? as &mut dyn Visitor);
+                let inner = unsafe { extend_lifetime!(seq.element()? as &mut dyn Visitor) };
                 let outer = mem::replace(&mut visitor, inner);
                 de.stack.push((outer, Layer::Seq(seq)));
             }
@@ -158,7 +158,7 @@ fn from_str_impl(j: &str, mut visitor: &mut dyn Visitor) -> Result<()> {
                 }
                 let inner = {
                     let k = de.parse_str()?;
-                    careful!(map.key(k)? as &mut dyn Visitor)
+                    unsafe { extend_lifetime!(map.key(k)? as &mut dyn Visitor) }
                 };
                 match de.parse_whitespace() {
                     Some(b':') => de.bump(),

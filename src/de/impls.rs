@@ -182,7 +182,7 @@ impl<T: Deserialize> Deserialize for Box<T> {
 
             fn seq(&mut self) -> Result<Box<dyn Seq + '_>> {
                 let mut value = Box::new(None);
-                let ptr = careful!(&mut *value as &mut Option<T>);
+                let ptr = unsafe { extend_lifetime!(&mut *value as &mut Option<T>) };
                 Ok(Box::new(BoxSeq {
                     out: &mut self.out,
                     value,
@@ -192,7 +192,7 @@ impl<T: Deserialize> Deserialize for Box<T> {
 
             fn map(&mut self) -> Result<Box<dyn Map + '_>> {
                 let mut value = Box::new(None);
-                let ptr = careful!(&mut *value as &mut Option<T>);
+                let ptr = unsafe { extend_lifetime!(&mut *value as &mut Option<T>) };
                 Ok(Box::new(BoxMap {
                     out: &mut self.out,
                     value,

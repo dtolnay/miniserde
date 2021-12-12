@@ -67,7 +67,7 @@ fn to_string_impl(value: &dyn Serialize) -> String {
             Fragment::Seq(mut seq) => {
                 out.push('[');
                 // invariant: `seq` must outlive `first`
-                match careful!(seq.next() as Option<&dyn Serialize>) {
+                match unsafe { extend_lifetime!(seq.next() as Option<&dyn Serialize>) } {
                     Some(first) => {
                         serializer.stack.push(Layer::Seq(seq));
                         fragment = first.begin();
@@ -79,7 +79,8 @@ fn to_string_impl(value: &dyn Serialize) -> String {
             Fragment::Map(mut map) => {
                 out.push('{');
                 // invariant: `map` must outlive `first`
-                match careful!(map.next() as Option<(Cow<str>, &dyn Serialize)>) {
+                match unsafe { extend_lifetime!(map.next() as Option<(Cow<str>, &dyn Serialize)>) }
+                {
                     Some((key, first)) => {
                         escape_str(&key, &mut out);
                         out.push(':');
@@ -96,7 +97,7 @@ fn to_string_impl(value: &dyn Serialize) -> String {
             match serializer.stack.last_mut() {
                 Some(Layer::Seq(seq)) => {
                     // invariant: `seq` must outlive `next`
-                    match careful!(seq.next() as Option<&dyn Serialize>) {
+                    match unsafe { extend_lifetime!(seq.next() as Option<&dyn Serialize>) } {
                         Some(next) => {
                             out.push(',');
                             fragment = next.begin();
@@ -107,7 +108,9 @@ fn to_string_impl(value: &dyn Serialize) -> String {
                 }
                 Some(Layer::Map(map)) => {
                     // invariant: `map` must outlive `next`
-                    match careful!(map.next() as Option<(Cow<str>, &dyn Serialize)>) {
+                    match unsafe {
+                        extend_lifetime!(map.next() as Option<(Cow<str>, &dyn Serialize)>)
+                    } {
                         Some((key, next)) => {
                             out.push(',');
                             escape_str(&key, &mut out);

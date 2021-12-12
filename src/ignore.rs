@@ -4,7 +4,7 @@ use crate::lib::Box;
 
 impl dyn Visitor {
     pub fn ignore() -> &'static mut dyn Visitor {
-        careful!(&mut Ignore as &mut Ignore)
+        unsafe { extend_lifetime!(&mut Ignore as &mut Ignore) }
     }
 }
 

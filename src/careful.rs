@@ -8,23 +8,23 @@
 // exposed to Serialize and Deserialize impls, so the miniserde public API
 // remains entirely safe to use.
 //
-//     careful!(EXPR as TYPE)
+//     unsafe { extend_lifetime!(EXPR as TYPE) }
 //
 // expands to:
 //
 //     std::mem::transmute::<TYPE, TYPE>(EXPR)
-macro_rules! careful {
+macro_rules! extend_lifetime {
     ($($cast:tt)*) => {
-        careful_impl!(() $($cast)*)
+        extend_lifetime_impl!(() $($cast)*)
     };
 }
 
-macro_rules! careful_impl {
+macro_rules! extend_lifetime_impl {
     (($($expr:tt)*) as $t:ty) => {{
         let expr = $($expr)*;
-        unsafe { $crate::lib::mem::transmute::<$t, $t>(expr) }
+        $crate::lib::mem::transmute::<$t, $t>(expr)
     }};
     (($($expr:tt)*) $next:tt $($rest:tt)*) => {
-        careful_impl!(($($expr)* $next) $($rest)*)
+        extend_lifetime_impl!(($($expr)* $next) $($rest)*)
     };
 }
