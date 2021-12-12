@@ -8,7 +8,7 @@ repository = "https://github.com/dtolnay/miniserde"
 documentation = "https://docs.rs/miniserde"
 readme = "README.md"
 edition = "2018"
-rust-version = "1.31"
+rust-version = "1.36"
 
 [dependencies]
 itoa = { version = "0.4.3", default-features = false }
