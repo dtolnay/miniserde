@@ -159,7 +159,7 @@ pub fn derive_enum(input: &DeriveInput, enumeration: &DataEnum) -> Result<TokenS
                 fn string(&mut self, s: &miniserde::__private::str) -> miniserde::Result<()> {
                     let value = match s {
                         #( #names => #ident::#var_idents, )*
-                        _ => { return miniserde::__private::Err(miniserde::Error) },
+                        _ => return miniserde::__private::Err(miniserde::Error),
                     };
                     self.__out = miniserde::__private::Some(value);
                     miniserde::__private::Ok(())
