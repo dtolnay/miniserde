@@ -2,10 +2,9 @@ use self::Event::*;
 use crate::de::{Deserialize, Map, Seq, Visitor};
 use crate::error::{Error, Result};
 use crate::ptr::NonuniqueBox;
-use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::char;
-use core::mem;
+use core::ptr::NonNull;
 use core::str;
 
 /// Deserialize a JSON string into any deserializable type.
@@ -38,7 +37,7 @@ struct Deserializer<'a, 'b> {
     input: &'a [u8],
     pos: usize,
     buffer: Vec<u8>,
-    stack: Vec<(&'b mut dyn Visitor, Layer<'b>)>,
+    stack: Vec<(NonNull<dyn Visitor>, Layer<'b>)>,
 }
 
 enum Layer<'a> {
@@ -55,7 +54,9 @@ impl<'a, 'b> Drop for Deserializer<'a, 'b> {
     }
 }
 
-fn from_str_impl(j: &str, mut visitor: &mut dyn Visitor) -> Result<()> {
+fn from_str_impl(j: &str, visitor: &mut dyn Visitor) -> Result<()> {
+    let visitor = NonNull::from(visitor);
+    let mut visitor = unsafe { extend_lifetime!(visitor as NonNull<dyn Visitor>) };
     let mut de = Deserializer {
         input: j.as_bytes(),
         pos: 0,
@@ -64,37 +65,38 @@ fn from_str_impl(j: &str, mut visitor: &mut dyn Visitor) -> Result<()> {
     };
 
     'outer: loop {
+        let visitor_mut = unsafe { &mut *visitor.as_ptr() };
         let layer = match de.event()? {
             Null => {
-                visitor.null()?;
+                visitor_mut.null()?;
                 None
             }
             Bool(b) => {
-                visitor.boolean(b)?;
+                visitor_mut.boolean(b)?;
                 None
             }
             Negative(n) => {
-                visitor.negative(n)?;
+                visitor_mut.negative(n)?;
                 None
             }
             Nonnegative(n) => {
-                visitor.nonnegative(n)?;
+                visitor_mut.nonnegative(n)?;
                 None
             }
             Float(n) => {
-                visitor.float(n)?;
+                visitor_mut.float(n)?;
                 None
             }
             Str(s) => {
-                visitor.string(s)?;
+                visitor_mut.string(s)?;
                 None
             }
             SeqStart => {
-                let seq = unsafe { extend_lifetime!(visitor.seq()? as Box<dyn Seq>) };
+                let seq = visitor_mut.seq()?;
                 Some(Layer::Seq(NonuniqueBox::from(seq)))
             }
             MapStart => {
-                let map = unsafe { extend_lifetime!(visitor.map()? as Box<dyn Map>) };
+                let map = visitor_mut.map()?;
                 Some(Layer::Map(NonuniqueBox::from(map)))
             }
         };
@@ -146,10 +148,12 @@ fn from_str_impl(j: &str, mut visitor: &mut dyn Visitor) -> Result<()> {
             }
         }
 
+        let outer = visitor;
         match layer {
             Layer::Seq(mut seq) => {
-                let inner = unsafe { extend_lifetime!(seq.element()? as &mut dyn Visitor) };
-                let outer = mem::replace(&mut visitor, inner);
+                let element = seq.element()?;
+                let next = NonNull::from(element);
+                visitor = unsafe { extend_lifetime!(next as NonNull<dyn Visitor>) };
                 de.stack.push((outer, Layer::Seq(seq)));
             }
             Layer::Map(mut map) => {
@@ -157,15 +161,14 @@ fn from_str_impl(j: &str, mut visitor: &mut dyn Visitor) -> Result<()> {
                     Some(b'"') => de.bump(),
                     _ => return Err(Error),
                 }
-                let inner = {
-                    let k = de.parse_str()?;
-                    unsafe { extend_lifetime!(map.key(k)? as &mut dyn Visitor) }
-                };
+                let key = de.parse_str()?;
+                let entry = map.key(key)?;
+                let next = NonNull::from(entry);
+                visitor = unsafe { extend_lifetime!(next as NonNull<dyn Visitor>) };
                 match de.parse_whitespace() {
                     Some(b':') => de.bump(),
                     _ => return Err(Error),
                 }
-                let outer = mem::replace(&mut visitor, inner);
                 de.stack.push((outer, Layer::Map(map)));
             }
         }
