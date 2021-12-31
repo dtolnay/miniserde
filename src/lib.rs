@@ -150,6 +150,7 @@
     clippy::checked_conversions,
     clippy::doc_markdown,
     clippy::enum_glob_use,
+    clippy::let_underscore_drop,
     clippy::missing_errors_doc,
     clippy::must_use_candidate,
     clippy::redundant_else,
