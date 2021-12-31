@@ -19,7 +19,8 @@ use core::str;
 /// use miniserde::json::{Array, Value};
 ///
 /// let mut value = Value::Null;
-/// for _ in 0..100000 {
+#[cfg_attr(not(miri), doc = "for _ in 0..100000 {")]
+#[cfg_attr(miri, doc = "for _ in 0..40 {")]
 ///     let mut array = Array::new();
 ///     array.push(value);
 ///     value = Value::Array(array);

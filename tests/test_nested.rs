@@ -2,11 +2,13 @@ use miniserde::json::{self, Value};
 
 #[test]
 fn test_round_trip_deeply_nested() {
+    let depth = if cfg!(miri) { 40 } else { 100_000 };
+
     let mut j = String::new();
-    for _ in 0..100_000 {
+    for _ in 0..depth {
         j.push_str("{\"x\":[");
     }
-    for _ in 0..100_000 {
+    for _ in 0..depth {
         j.push_str("]}");
     }
 
