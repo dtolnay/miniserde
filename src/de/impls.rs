@@ -1,6 +1,6 @@
 #[cfg(feature = "std")]
 use crate::lib::hash::{BuildHasher, Hash};
-use crate::lib::mem;
+use crate::lib::mem::{self, ManuallyDrop};
 use crate::lib::str::FromStr;
 #[cfg(feature = "std")]
 use crate::lib::Default;
@@ -187,7 +187,7 @@ impl<T: Deserialize> Deserialize for Box<T> {
                 Ok(Box::new(BoxSeq {
                     out: &mut self.out,
                     value,
-                    seq: Deserialize::begin(ptr).seq()?,
+                    seq: ManuallyDrop::new(Deserialize::begin(ptr).seq()?),
                 }))
             }
 
@@ -197,7 +197,7 @@ impl<T: Deserialize> Deserialize for Box<T> {
                 Ok(Box::new(BoxMap {
                     out: &mut self.out,
                     value,
-                    map: Deserialize::begin(ptr).map()?,
+                    map: ManuallyDrop::new(Deserialize::begin(ptr).map()?),
                 }))
             }
         }
@@ -205,7 +205,14 @@ impl<T: Deserialize> Deserialize for Box<T> {
         struct BoxSeq<'a, T: 'a> {
             out: &'a mut Option<Box<T>>,
             value: Box<Option<T>>,
-            seq: Box<dyn Seq + 'a>,
+            // May borrow from self.value, so must drop first.
+            seq: ManuallyDrop<Box<dyn Seq + 'a>>,
+        }
+
+        impl<'a, T: 'a> Drop for BoxSeq<'a, T> {
+            fn drop(&mut self) {
+                unsafe { ManuallyDrop::drop(&mut self.seq) }
+            }
         }
 
         impl<'a, T: Deserialize> Seq for BoxSeq<'a, T> {
@@ -215,7 +222,7 @@ impl<T: Deserialize> Deserialize for Box<T> {
 
             fn finish(&mut self) -> Result<()> {
                 self.seq.finish()?;
-                self.seq = Box::new(Ignore);
+                *self.seq = Box::new(Ignore);
                 *self.out = Some(Box::new(self.value.take().unwrap()));
                 Ok(())
             }
@@ -224,7 +231,14 @@ impl<T: Deserialize> Deserialize for Box<T> {
         struct BoxMap<'a, T: 'a> {
             out: &'a mut Option<Box<T>>,
             value: Box<Option<T>>,
-            map: Box<dyn Map + 'a>,
+            // May borrow from self.value, so must drop first.
+            map: ManuallyDrop<Box<dyn Map + 'a>>,
+        }
+
+        impl<'a, T: 'a> Drop for BoxMap<'a, T> {
+            fn drop(&mut self) {
+                unsafe { ManuallyDrop::drop(&mut self.map) }
+            }
         }
 
         impl<'a, T: Deserialize> Map for BoxMap<'a, T> {
@@ -234,7 +248,7 @@ impl<T: Deserialize> Deserialize for Box<T> {
 
             fn finish(&mut self) -> Result<()> {
                 self.map.finish()?;
-                self.map = Box::new(Ignore);
+                *self.map = Box::new(Ignore);
                 *self.out = Some(Box::new(self.value.take().unwrap()));
                 Ok(())
             }
