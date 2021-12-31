@@ -8,7 +8,7 @@ impl dyn Visitor {
     }
 }
 
-struct Ignore;
+pub(crate) struct Ignore;
 
 impl Visitor for Ignore {
     fn null(&mut self) -> Result<()> {

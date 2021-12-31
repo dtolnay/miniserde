@@ -10,6 +10,7 @@ use std::collections::HashMap;
 
 use crate::de::{Deserialize, Map, Seq, Visitor};
 use crate::error::{Error, Result};
+use crate::ignore::Ignore;
 use crate::Place;
 
 impl Deserialize for () {
@@ -214,6 +215,7 @@ impl<T: Deserialize> Deserialize for Box<T> {
 
             fn finish(&mut self) -> Result<()> {
                 self.seq.finish()?;
+                self.seq = Box::new(Ignore);
                 *self.out = Some(Box::new(self.value.take().unwrap()));
                 Ok(())
             }
@@ -232,6 +234,7 @@ impl<T: Deserialize> Deserialize for Box<T> {
 
             fn finish(&mut self) -> Result<()> {
                 self.map.finish()?;
+                self.map = Box::new(Ignore);
                 *self.out = Some(Box::new(self.value.take().unwrap()));
                 Ok(())
             }
