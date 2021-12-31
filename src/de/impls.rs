@@ -1,6 +1,7 @@
 use crate::de::{Deserialize, Map, Seq, Visitor};
 use crate::error::{Error, Result};
 use crate::ignore::Ignore;
+use crate::ptr::NonuniqueBox;
 use crate::Place;
 use alloc::borrow::ToOwned;
 use alloc::boxed::Box;
@@ -183,7 +184,7 @@ impl<T: Deserialize> Deserialize for Box<T> {
             }
 
             fn seq(&mut self) -> Result<Box<dyn Seq + '_>> {
-                let mut value = Box::new(None);
+                let mut value = NonuniqueBox::new(None);
                 let ptr = unsafe { extend_lifetime!(&mut *value as &mut Option<T>) };
                 Ok(Box::new(BoxSeq {
                     out: &mut self.out,
@@ -193,7 +194,7 @@ impl<T: Deserialize> Deserialize for Box<T> {
             }
 
             fn map(&mut self) -> Result<Box<dyn Map + '_>> {
-                let mut value = Box::new(None);
+                let mut value = NonuniqueBox::new(None);
                 let ptr = unsafe { extend_lifetime!(&mut *value as &mut Option<T>) };
                 Ok(Box::new(BoxMap {
                     out: &mut self.out,
@@ -205,7 +206,7 @@ impl<T: Deserialize> Deserialize for Box<T> {
 
         struct BoxSeq<'a, T: 'a> {
             out: &'a mut Option<Box<T>>,
-            value: Box<Option<T>>,
+            value: NonuniqueBox<Option<T>>,
             // May borrow from self.value, so must drop first.
             seq: ManuallyDrop<Box<dyn Seq + 'a>>,
         }
@@ -231,7 +232,7 @@ impl<T: Deserialize> Deserialize for Box<T> {
 
         struct BoxMap<'a, T: 'a> {
             out: &'a mut Option<Box<T>>,
-            value: Box<Option<T>>,
+            value: NonuniqueBox<Option<T>>,
             // May borrow from self.value, so must drop first.
             map: ManuallyDrop<Box<dyn Map + 'a>>,
         }

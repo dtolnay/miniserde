@@ -183,6 +183,7 @@ mod place;
 
 mod error;
 mod ignore;
+mod ptr;
 
 pub mod de;
 pub mod json;
