@@ -11,8 +11,8 @@ enum Tag {
 struct Example {
     x: String,
     t1: Tag,
-    t2: Tag,
-    n: Nested,
+    t2: Box<Tag>,
+    n: Box<Nested>,
 }
 
 #[derive(PartialEq, Debug, Serialize, Deserialize)]
@@ -28,11 +28,11 @@ fn test_de() {
     let expected = Example {
         x: "X".to_owned(),
         t1: Tag::A,
-        t2: Tag::B,
-        n: Nested {
+        t2: Box::new(Tag::B),
+        n: Box::new(Nested {
             y: Some(vec!["Y".to_owned(), "Y".to_owned()]),
             z: None,
-        },
+        }),
     };
     assert_eq!(actual, expected);
 }
@@ -42,11 +42,11 @@ fn test_ser() {
     let example = Example {
         x: "X".to_owned(),
         t1: Tag::A,
-        t2: Tag::B,
-        n: Nested {
+        t2: Box::new(Tag::B),
+        n: Box::new(Nested {
             y: Some(vec!["Y".to_owned(), "Y".to_owned()]),
             z: None,
-        },
+        }),
     };
     let actual = json::to_string(&example);
     let expected = r#"{"x":"X","t1":"A","t2":"renamedB","n":{"y":["Y","Y"],"z":null}}"#;
