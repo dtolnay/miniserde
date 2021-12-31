@@ -32,7 +32,7 @@ macro_rules! make_place {
 
         impl<__T> $name<__T> {
             fn new(out: &mut $crate::__private::Option<__T>) -> &mut Self {
-                unsafe { &mut *{ out as *mut $crate::__private::Option<__T> as *mut $name<__T> } }
+                unsafe { &mut *(out as *mut $crate::__private::Option<__T> as *mut $name<__T>) }
             }
         }
     };
