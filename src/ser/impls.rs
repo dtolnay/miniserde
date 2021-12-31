@@ -1,12 +1,10 @@
 use crate::lib::{btree_map, slice, str, BTreeMap, Box, Cow, String, ToOwned, ToString, Vec};
-
+use crate::private;
+use crate::ser::{Fragment, Map, Seq, Serialize};
 #[cfg(feature = "std")]
 use std::collections::{hash_map, HashMap};
 #[cfg(feature = "std")]
 use std::hash::{BuildHasher, Hash};
-
-use crate::private;
-use crate::ser::{Fragment, Map, Seq, Serialize};
 
 impl Serialize for () {
     fn begin(&self) -> Fragment {

@@ -1,11 +1,10 @@
+use self::Event::*;
+use crate::de::{Deserialize, Map, Seq, Visitor};
+use crate::error::{Error, Result};
 use crate::lib::char;
 use crate::lib::mem;
 use crate::lib::str;
 use crate::lib::{Box, Vec};
-
-use self::Event::*;
-use crate::de::{Deserialize, Map, Seq, Visitor};
-use crate::error::{Error, Result};
 
 /// Deserialize a JSON string into any deserializable type.
 ///

@@ -1,3 +1,6 @@
+use crate::de::{Deserialize, Map, Seq, Visitor};
+use crate::error::{Error, Result};
+use crate::ignore::Ignore;
 #[cfg(feature = "std")]
 use crate::lib::hash::{BuildHasher, Hash};
 use crate::lib::mem::{self, ManuallyDrop};
@@ -5,13 +8,9 @@ use crate::lib::str::FromStr;
 #[cfg(feature = "std")]
 use crate::lib::Default;
 use crate::lib::{str, BTreeMap, Box, String, ToOwned, Vec};
+use crate::Place;
 #[cfg(feature = "std")]
 use std::collections::HashMap;
-
-use crate::de::{Deserialize, Map, Seq, Visitor};
-use crate::error::{Error, Result};
-use crate::ignore::Ignore;
-use crate::Place;
 
 impl Deserialize for () {
     fn begin(out: &mut Option<Self>) -> &mut dyn Visitor {
