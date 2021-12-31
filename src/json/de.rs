@@ -1,6 +1,7 @@
 use self::Event::*;
 use crate::de::{Deserialize, Map, Seq, Visitor};
 use crate::error::{Error, Result};
+use crate::ptr::NonuniqueBox;
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::char;
@@ -41,8 +42,8 @@ struct Deserializer<'a, 'b> {
 }
 
 enum Layer<'a> {
-    Seq(Box<dyn Seq + 'a>),
-    Map(Box<dyn Map + 'a>),
+    Seq(NonuniqueBox<dyn Seq + 'a>),
+    Map(NonuniqueBox<dyn Map + 'a>),
 }
 
 impl<'a, 'b> Drop for Deserializer<'a, 'b> {
@@ -90,11 +91,11 @@ fn from_str_impl(j: &str, mut visitor: &mut dyn Visitor) -> Result<()> {
             }
             SeqStart => {
                 let seq = unsafe { extend_lifetime!(visitor.seq()? as Box<dyn Seq>) };
-                Some(Layer::Seq(seq))
+                Some(Layer::Seq(NonuniqueBox::from(seq)))
             }
             MapStart => {
                 let map = unsafe { extend_lifetime!(visitor.map()? as Box<dyn Map>) };
-                Some(Layer::Map(map))
+                Some(Layer::Map(NonuniqueBox::from(map)))
             }
         };
 
