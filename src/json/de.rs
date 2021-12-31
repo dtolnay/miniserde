@@ -226,8 +226,9 @@ impl<'a, 'b> Deserializer<'a, 'b> {
 
     fn parse_str(&mut self) -> Result<&str> {
         fn result(bytes: &[u8]) -> &str {
-            // The input is assumed to be valid UTF-8 and the \u-escapes are
-            // checked along the way, so don't need to check here.
+            // The deserialization input came in as &str with a UTF-8 guarantee,
+            // and the \u-escapes are checked along the way, so don't need to
+            // check here.
             unsafe { str::from_utf8_unchecked(bytes) }
         }
 
