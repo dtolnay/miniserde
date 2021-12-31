@@ -22,7 +22,7 @@ macro_rules! extend_lifetime {
 macro_rules! extend_lifetime_impl {
     (($($expr:tt)*) as $t:ty) => {{
         let expr = $($expr)*;
-        $crate::lib::mem::transmute::<$t, $t>(expr)
+        core::mem::transmute::<$t, $t>(expr)
     }};
     (($($expr:tt)*) $next:tt $($rest:tt)*) => {
         extend_lifetime_impl!(($($expr)* $next) $($rest)*)

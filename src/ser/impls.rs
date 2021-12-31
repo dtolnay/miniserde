@@ -1,6 +1,12 @@
-use crate::lib::{btree_map, slice, str, BTreeMap, Box, Cow, String, ToOwned, ToString, Vec};
 use crate::private;
 use crate::ser::{Fragment, Map, Seq, Serialize};
+use alloc::borrow::{Cow, ToOwned};
+use alloc::boxed::Box;
+use alloc::collections::{btree_map, BTreeMap};
+use alloc::string::{String, ToString};
+use alloc::vec::Vec;
+use core::slice;
+use core::str;
 #[cfg(feature = "std")]
 use std::collections::{hash_map, HashMap};
 #[cfg(feature = "std")]

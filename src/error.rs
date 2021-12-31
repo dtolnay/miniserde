@@ -9,7 +9,7 @@ use std::fmt;
 pub struct Error;
 
 /// Result type returned by deserialization functions.
-pub type Result<T> = crate::lib::result::Result<T, Error>;
+pub type Result<T> = core::result::Result<T, Error>;
 
 #[cfg(feature = "std")]
 impl fmt::Display for Error {

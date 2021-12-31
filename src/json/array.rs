@@ -1,8 +1,8 @@
 use crate::json::{drop, Value};
-use crate::lib::iter::FromIterator;
-use crate::lib::mem::ManuallyDrop;
-use crate::lib::ops::{Deref, DerefMut};
-use crate::lib::Vec;
+use alloc::vec::Vec;
+use core::iter::FromIterator;
+use core::mem::ManuallyDrop;
+use core::ops::{Deref, DerefMut};
 #[cfg(not(feature = "std"))]
 use core::ptr;
 #[cfg(feature = "std")]

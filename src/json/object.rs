@@ -1,14 +1,16 @@
 use crate::json::{drop, Value};
-use crate::lib::iter::FromIterator;
-use crate::lib::mem::{self, ManuallyDrop};
-use crate::lib::ops::{Deref, DerefMut};
-use crate::lib::Cow;
-use crate::lib::{btree_map, BTreeMap};
-use crate::lib::{str, Box, String};
 use crate::private;
 use crate::ser::{self, Fragment, Serialize};
+use alloc::borrow::Cow;
+use alloc::boxed::Box;
+use alloc::collections::{btree_map, BTreeMap};
+use alloc::string::String;
+use core::iter::FromIterator;
+use core::mem::{self, ManuallyDrop};
+use core::ops::{Deref, DerefMut};
 #[cfg(not(feature = "std"))]
 use core::ptr;
+use core::str;
 #[cfg(feature = "std")]
 use std::ptr;
 

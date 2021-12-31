@@ -1,16 +1,18 @@
 use crate::de::{Deserialize, Map, Seq, Visitor};
 use crate::error::{Error, Result};
 use crate::ignore::Ignore;
-#[cfg(feature = "std")]
-use crate::lib::hash::{BuildHasher, Hash};
-use crate::lib::mem::{self, ManuallyDrop};
-use crate::lib::str::FromStr;
-#[cfg(feature = "std")]
-use crate::lib::Default;
-use crate::lib::{str, BTreeMap, Box, String, ToOwned, Vec};
 use crate::Place;
+use alloc::borrow::ToOwned;
+use alloc::boxed::Box;
+use alloc::collections::BTreeMap;
+use alloc::string::String;
+use alloc::vec::Vec;
+use core::mem::{self, ManuallyDrop};
+use core::str::{self, FromStr};
 #[cfg(feature = "std")]
 use std::collections::HashMap;
+#[cfg(feature = "std")]
+use std::hash::{BuildHasher, Hash};
 
 impl Deserialize for () {
     fn begin(out: &mut Option<Self>) -> &mut dyn Visitor {

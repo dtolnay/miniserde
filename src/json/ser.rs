@@ -1,5 +1,8 @@
-use crate::lib::{Box, Cow, String, Vec};
 use crate::ser::{Fragment, Map, Seq, Serialize};
+use alloc::borrow::Cow;
+use alloc::boxed::Box;
+use alloc::string::String;
+use alloc::vec::Vec;
 
 /// Serialize any serializable type into a JSON string.
 ///

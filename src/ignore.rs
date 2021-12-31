@@ -1,6 +1,6 @@
 use crate::de::{Map, Seq, Visitor};
 use crate::error::Result;
-use crate::lib::Box;
+use alloc::boxed::Box;
 
 impl dyn Visitor {
     pub fn ignore() -> &'static mut dyn Visitor {
