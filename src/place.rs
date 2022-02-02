@@ -1,6 +1,6 @@
 /// Macro to define a "place" type compatible with deserialization.
 ///
-/// [Refer to the `miniserde::de` documentation for examples.][::de]
+/// [Refer to the `miniserde::de` documentation for examples.][crate::de]
 ///
 /// This macro expands to:
 ///
