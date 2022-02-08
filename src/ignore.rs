@@ -4,7 +4,8 @@ use alloc::boxed::Box;
 
 impl dyn Visitor {
     pub fn ignore() -> &'static mut dyn Visitor {
-        unsafe { extend_lifetime!(&mut Ignore as &mut Ignore) }
+        static mut IGNORE: Ignore = Ignore;
+        unsafe { &mut IGNORE }
     }
 }
 
