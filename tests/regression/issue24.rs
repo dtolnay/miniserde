@@ -1,10 +1,9 @@
-#![allow(dead_code)]
 use miniserde::{json, Deserialize};
 
 #[derive(Deserialize)]
-struct Point {
-    x: u32,
-    y: u32,
+pub struct Point {
+    pub x: u32,
+    pub y: u32,
 }
 
 #[test]
