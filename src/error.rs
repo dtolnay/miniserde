@@ -1,5 +1,4 @@
-#[cfg(feature = "std")]
-use std::fmt;
+use core::fmt::{self, Display};
 
 /// Error type when deserialization fails.
 ///
@@ -11,8 +10,7 @@ pub struct Error;
 /// Result type returned by deserialization functions.
 pub type Result<T> = core::result::Result<T, Error>;
 
-#[cfg(feature = "std")]
-impl fmt::Display for Error {
+impl Display for Error {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         formatter.write_str("miniserde error")
     }
