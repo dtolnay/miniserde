@@ -1,0 +1,5 @@
+error: unsupported attribute
+ --> tests/ui/attr-unsupported.rs:5:13
+  |
+5 |     #[serde(skip)]
+  |             ^^^^

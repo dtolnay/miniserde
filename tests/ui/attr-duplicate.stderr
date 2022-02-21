@@ -1,0 +1,5 @@
+error: duplicate rename attribute
+ --> tests/ui/attr-duplicate.rs:5:27
+  |
+5 |     #[serde(rename = "A", rename = "B")]
+  |                           ^^^^^^^^^^^^
