@@ -8,11 +8,8 @@ use alloc::string::String;
 use core::iter::FromIterator;
 use core::mem::{self, ManuallyDrop};
 use core::ops::{Deref, DerefMut};
-#[cfg(not(feature = "std"))]
 use core::ptr;
 use core::str;
-#[cfg(feature = "std")]
-use std::ptr;
 
 /// A `BTreeMap<String, Value>` with a non-recursive drop impl.
 #[derive(Clone, Debug, Default)]
