@@ -1,0 +1,7 @@
+error: Enums with generics are not supported
+ --> tests/ui/de-enum-generic.rs:3:10
+  |
+3 | #[derive(Deserialize)]
+  |          ^^^^^^^^^^^
+  |
+  = note: this error originates in the derive macro `Deserialize` (in Nightly builds, run with -Z macro-backtrace for more info)

@@ -1,0 +1,5 @@
+error: Invalid variant: only simple enum variants without fields are supported
+ --> tests/ui/ser-enum-data.rs:5:5
+  |
+5 |     Variant(i32)
+  |     ^^^^^^^^^^^^
