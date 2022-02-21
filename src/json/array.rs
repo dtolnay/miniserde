@@ -3,10 +3,7 @@ use alloc::vec::Vec;
 use core::iter::FromIterator;
 use core::mem::ManuallyDrop;
 use core::ops::{Deref, DerefMut};
-#[cfg(not(feature = "std"))]
 use core::ptr;
-#[cfg(feature = "std")]
-use std::ptr;
 
 /// A `Vec<Value>` with a non-recursive drop impl.
 #[derive(Clone, Debug, Default)]
