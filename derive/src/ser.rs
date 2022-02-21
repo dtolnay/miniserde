@@ -12,9 +12,13 @@ pub fn derive(input: DeriveInput) -> Result<TokenStream> {
             ..
         }) => derive_struct(&input, fields),
         Data::Enum(enumeration) => derive_enum(&input, enumeration),
-        _ => Err(Error::new(
+        Data::Struct(_) => Err(Error::new(
             Span::call_site(),
             "currently only structs with named fields are supported",
+        )),
+        Data::Union(_) => Err(Error::new(
+            Span::call_site(),
+            "currently only structs and enums are supported by this derive",
         )),
     }
 }
