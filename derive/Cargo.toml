@@ -1,6 +1,6 @@
 [package]
 name = "mini-internal"
-version = "0.1.22"
+version = "0.1.23"
 authors = ["David Tolnay <dtolnay@gmail.com>"]
 license = "MIT OR Apache-2.0"
 description = "Derive macros for miniserde. Use the re-exports from the miniserde crate instead."
