@@ -117,10 +117,11 @@
 //! formats, but it is not a goal to enable that through what this library
 //! exposes.
 //!
-//! ## <font color="#C0C0C0">Different:</font> Structs only
+//! ## <font color="#C0C0C0">Different:</font> Structs and unit variants only
 //!
 //! The miniserde derive macros will refuse anything other than a braced struct
-//! with named fields. Enums and tuple structs are not supported.
+//! with named fields or an enum with C-style variants. Tuple structs are not
+//! supported, and enums with data in their variants are not supported.
 //!
 //! ## <font color="#C0C0C0">Different:</font> No customization
 //!
