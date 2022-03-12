@@ -124,7 +124,8 @@ but it is not a goal to enable that through what this library exposes.
 ### Different: Structs only
 
 The miniserde derive macros will refuse anything other than a braced struct with
-named fields. Enums and tuple structs are not supported.
+named fields. Enums and tuple structs are not supported, with the exception of
+C-style enums (no variants have associated data).
 
 ### Different: No customization
 
