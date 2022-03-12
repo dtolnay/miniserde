@@ -121,11 +121,11 @@ stream which may be fallible.
 The same approach in this library could be made to work for other data formats,
 but it is not a goal to enable that through what this library exposes.
 
-### Different: Structs only
+### Different: Structs and unit variants only
 
 The miniserde derive macros will refuse anything other than a braced struct with
-named fields. Enums and tuple structs are not supported, with the exception of
-C-style enums (no variants have associated data).
+named fields or an enum with C-style variants. Tuple structs are not supported,
+and enums with data in their variants are not supported.
 
 ### Different: No customization
 
