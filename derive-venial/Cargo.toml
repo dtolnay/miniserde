@@ -1,0 +1,22 @@
+[package]
+name = "miniserde-derive-venial"
+version = "0.1.23"
+authors = ["David Tolnay <dtolnay@gmail.com>"]
+license = "MIT OR Apache-2.0"
+description = "Derive macros for miniserde. Use the re-exports from the miniserde crate instead."
+repository = "https://github.com/dtolnay/miniserde"
+documentation = "https://docs.rs/miniserde"
+edition = "2018"
+rust-version = "1.36"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+expander = "0.0.5"
+proc-macro2 = "1.0"
+quote = "1.0.2"
+venial = { path = "../../venial" }
+
+[package.metadata.docs.rs]
+targets = ["x86_64-unknown-linux-gnu"]

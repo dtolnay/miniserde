@@ -14,6 +14,7 @@ rust-version = "1.36"
 [dependencies]
 itoa = "1.0"
 mini-internal = { version = "=0.1.23", path = "derive" }
+miniserde-derive-venial = { path = "derive-venial" }
 ryu = "1.0"
 
 [dev-dependencies]
@@ -25,7 +26,7 @@ serde_json = "1.0"
 trybuild = { version = "1.0.49", features = ["diff"] }
 
 [workspace]
-members = ["derive", "tests/crate"]
+members = ["derive", "derive-venial", "tests/crate"]
 
 [package.metadata.docs.rs]
 targets = ["x86_64-unknown-linux-gnu"]
