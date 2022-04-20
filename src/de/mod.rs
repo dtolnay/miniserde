@@ -184,13 +184,13 @@
 
 mod impls;
 
-use crate::error::{Error, Result};
+use crate::{error::Result, place::Cell};
 use alloc::boxed::Box;
 
 /// Trait for data structures that can be deserialized from a JSON string.
 ///
 /// [Refer to the module documentation for examples.][crate::de]
-pub trait Deserialize: Sized {
+pub trait Deserialize<E>: Sized {
     /// The only correct implementation of this method is:
     ///
     /// ```rust
@@ -207,7 +207,7 @@ pub trait Deserialize: Sized {
     /// }
     /// # }
     /// ```
-    fn begin(out: &mut Option<Self>) -> &mut dyn Visitor;
+    fn begin(out: &mut Cell<Self, E>) -> &mut dyn Visitor<Error = E>;
 
     // Not public API. This method is only intended for Option<T>, should not
     // need to be implemented outside of this crate.
@@ -222,56 +222,66 @@ pub trait Deserialize: Sized {
 ///
 /// [Refer to the module documentation for examples.][crate::de]
 pub trait Visitor {
-    fn null(&mut self) -> Result<()> {
-        Err(Error)
+    type Error: VisitorError;
+
+    fn raise(&mut self, err: Self::Error);
+
+    fn null(&mut self) {
+        self.raise(Self::Error::unexpected());
     }
 
-    fn boolean(&mut self, b: bool) -> Result<()> {
+    fn boolean(&mut self, b: bool) {
         let _ = b;
-        Err(Error)
+        self.raise(Self::Error::unexpected());
     }
 
-    fn string(&mut self, s: &str) -> Result<()> {
+    fn string(&mut self, s: &str) {
         let _ = s;
-        Err(Error)
+        self.raise(Self::Error::unexpected());
     }
 
-    fn negative(&mut self, n: i64) -> Result<()> {
+    fn negative(&mut self, n: i64) {
         let _ = n;
-        Err(Error)
+        self.raise(Self::Error::unexpected());
     }
 
-    fn nonnegative(&mut self, n: u64) -> Result<()> {
+    fn nonnegative(&mut self, n: u64) {
         let _ = n;
-        Err(Error)
+        self.raise(Self::Error::unexpected());
     }
 
-    fn float(&mut self, n: f64) -> Result<()> {
+    fn float(&mut self, n: f64) {
         let _ = n;
-        Err(Error)
+        self.raise(Self::Error::unexpected())
     }
 
-    fn seq(&mut self) -> Result<Box<dyn Seq + '_>> {
-        Err(Error)
+    fn seq(&mut self) -> Option<Box<dyn Seq<Self::Error> + '_>> {
+        self.raise(Self::Error::unexpected());
+        None
     }
 
-    fn map(&mut self) -> Result<Box<dyn Map + '_>> {
-        Err(Error)
+    fn map(&mut self) -> Option<Box<dyn Map<Self::Error> + '_>> {
+        self.raise(Self::Error::unexpected());
+        None
     }
 }
 
 /// Trait that can hand out places to write sequence elements.
 ///
 /// [Refer to the module documentation for examples.][crate::de]
-pub trait Seq {
-    fn element(&mut self) -> Result<&mut dyn Visitor>;
+pub trait Seq<E> {
+    fn element(&mut self) -> Result<&mut dyn Visitor<Error = E>>;
     fn finish(&mut self) -> Result<()>;
 }
 
 /// Trait that can hand out places to write values of a map.
 ///
 /// [Refer to the module documentation for examples.][crate::de]
-pub trait Map {
-    fn key(&mut self, k: &str) -> Result<&mut dyn Visitor>;
+pub trait Map<E> {
+    fn key(&mut self, k: &str) -> Result<&mut dyn Visitor<Error = E>>;
     fn finish(&mut self) -> Result<()>;
+}
+
+pub trait VisitorError {
+    fn unexpected() -> Self;
 }

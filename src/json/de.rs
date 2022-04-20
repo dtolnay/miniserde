@@ -1,6 +1,7 @@
 use self::Event::*;
-use crate::de::{Deserialize, Map, Seq, Visitor};
+use crate::de::{Deserialize, Map, Seq, Visitor, VisitorError};
 use crate::error::{Error, Result};
+use crate::place::Cell;
 use crate::ptr::NonuniqueBox;
 use alloc::vec::Vec;
 use core::char;
@@ -27,25 +28,29 @@ use core::str;
 ///     Ok(())
 /// }
 /// ```
-pub fn from_str<T: Deserialize>(j: &str) -> Result<T> {
-    let mut out = None;
-    from_str_impl(j, T::begin(&mut out))?;
-    out.ok_or(Error)
+pub fn from_str<E: VisitorError, T: Deserialize<E>>(j: &str) -> std::result::Result<T, E> {
+    let mut out = Cell::Empty;
+    from_str_impl(j, T::begin(&mut out)).map_err(|_| E::unexpected())?;
+    match out {
+        Cell::Ok(v) => Ok(v),
+        Cell::Err(e) => Err(e),
+        Cell::Empty => Err(E::unexpected()),
+    }
 }
 
-struct Deserializer<'a, 'b> {
+struct Deserializer<'a, 'b, E> {
     input: &'a [u8],
     pos: usize,
     buffer: Vec<u8>,
-    stack: Vec<(NonNull<dyn Visitor>, Layer<'b>)>,
+    stack: Vec<(NonNull<dyn Visitor<Error = E>>, Layer<'b, E>)>,
 }
 
-enum Layer<'a> {
-    Seq(NonuniqueBox<dyn Seq + 'a>),
-    Map(NonuniqueBox<dyn Map + 'a>),
+enum Layer<'a, E> {
+    Seq(NonuniqueBox<dyn Seq<E> + 'a>),
+    Map(NonuniqueBox<dyn Map<E> + 'a>),
 }
 
-impl<'a, 'b> Drop for Deserializer<'a, 'b> {
+impl<'a, 'b, E> Drop for Deserializer<'a, 'b, E> {
     fn drop(&mut self) {
         // Drop layers in reverse order.
         while !self.stack.is_empty() {
@@ -54,9 +59,9 @@ impl<'a, 'b> Drop for Deserializer<'a, 'b> {
     }
 }
 
-fn from_str_impl(j: &str, visitor: &mut dyn Visitor) -> Result<()> {
+fn from_str_impl<E: VisitorError>(j: &str, visitor: &mut dyn Visitor<Error = E>) -> Result<()> {
     let visitor = NonNull::from(visitor);
-    let mut visitor = unsafe { extend_lifetime!(visitor as NonNull<dyn Visitor>) };
+    let mut visitor = unsafe { extend_lifetime!(visitor as NonNull<dyn Visitor<Error = E>>) };
     let mut de = Deserializer {
         input: j.as_bytes(),
         pos: 0,
@@ -68,37 +73,39 @@ fn from_str_impl(j: &str, visitor: &mut dyn Visitor) -> Result<()> {
         let visitor_mut = unsafe { &mut *visitor.as_ptr() };
         let layer = match de.event()? {
             Null => {
-                visitor_mut.null()?;
+                visitor_mut.null();
                 None
             }
             Bool(b) => {
-                visitor_mut.boolean(b)?;
+                visitor_mut.boolean(b);
                 None
             }
             Negative(n) => {
-                visitor_mut.negative(n)?;
+                visitor_mut.negative(n);
                 None
             }
             Nonnegative(n) => {
-                visitor_mut.nonnegative(n)?;
+                visitor_mut.nonnegative(n);
                 None
             }
             Float(n) => {
-                visitor_mut.float(n)?;
+                visitor_mut.float(n);
                 None
             }
             Str(s) => {
-                visitor_mut.string(s)?;
+                visitor_mut.string(s);
                 None
             }
-            SeqStart => {
-                let seq = visitor_mut.seq()?;
-                Some(Layer::Seq(NonuniqueBox::from(seq)))
-            }
-            MapStart => {
-                let map = visitor_mut.map()?;
-                Some(Layer::Map(NonuniqueBox::from(map)))
-            }
+            SeqStart => match visitor_mut.seq() {
+                Some(seq) => Some(Layer::Seq(NonuniqueBox::from(seq))),
+                // early, the visitor notified that somethign was wrong
+                None => return Ok(()),
+            },
+            MapStart => match visitor_mut.map() {
+                Some(map) => Some(Layer::Map(NonuniqueBox::from(map))),
+                // early, the visitor notified that somethign was wrong
+                None => return Ok(()),
+            },
         };
 
         let mut accept_comma;
@@ -153,7 +160,7 @@ fn from_str_impl(j: &str, visitor: &mut dyn Visitor) -> Result<()> {
             Layer::Seq(mut seq) => {
                 let element = seq.element()?;
                 let next = NonNull::from(element);
-                visitor = unsafe { extend_lifetime!(next as NonNull<dyn Visitor>) };
+                visitor = unsafe { extend_lifetime!(next as NonNull<dyn Visitor<Error = E>>) };
                 de.stack.push((outer, Layer::Seq(seq)));
             }
             Layer::Map(mut map) => {
@@ -164,7 +171,7 @@ fn from_str_impl(j: &str, visitor: &mut dyn Visitor) -> Result<()> {
                 let key = de.parse_str()?;
                 let entry = map.key(key)?;
                 let next = NonNull::from(entry);
-                visitor = unsafe { extend_lifetime!(next as NonNull<dyn Visitor>) };
+                visitor = unsafe { extend_lifetime!(next as NonNull<dyn Visitor<Error = E>>) };
                 match de.parse_whitespace() {
                     Some(b':') => de.bump(),
                     _ => return Err(Error),
@@ -199,7 +206,7 @@ macro_rules! overflow {
     };
 }
 
-impl<'a, 'b> Deserializer<'a, 'b> {
+impl<'a, 'b, E> Deserializer<'a, 'b, E> {
     fn next(&mut self) -> Option<u8> {
         if self.pos < self.input.len() {
             let ch = self.input[self.pos];

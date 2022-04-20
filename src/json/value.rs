@@ -1,6 +1,7 @@
-use crate::de::{Deserialize, Map, Seq, Visitor};
+use crate::de::{Deserialize, Map, Seq, Visitor, VisitorError};
 use crate::error::Result;
 use crate::json::{Array, Number, Object};
+use crate::place::Cell;
 use crate::private;
 use crate::ser::{Fragment, Serialize};
 use crate::Place;
@@ -59,109 +60,116 @@ impl Serialize for Value {
     }
 }
 
-impl Deserialize for Value {
-    fn begin(out: &mut Option<Self>) -> &mut dyn Visitor {
-        impl Visitor for Place<Value> {
-            fn null(&mut self) -> Result<()> {
-                self.out = Some(Value::Null);
-                Ok(())
+impl<E> Deserialize<E> for Value
+where
+    E: VisitorError,
+{
+    fn begin(out: &mut Cell<Self, E>) -> &mut dyn Visitor<Error = E> {
+        impl<E> Visitor for Place<Value, E>
+        where
+            E: VisitorError,
+        {
+            type Error = E;
+
+            fn raise(&mut self, err: Self::Error) {
+                self.out.err(err);
             }
 
-            fn boolean(&mut self, b: bool) -> Result<()> {
-                self.out = Some(Value::Bool(b));
-                Ok(())
+            fn null(&mut self) {
+                self.out.set(Value::Null);
             }
 
-            fn string(&mut self, s: &str) -> Result<()> {
-                self.out = Some(Value::String(s.to_owned()));
-                Ok(())
+            fn boolean(&mut self, b: bool) {
+                self.out.set(Value::Bool(b));
             }
 
-            fn negative(&mut self, n: i64) -> Result<()> {
-                self.out = Some(Value::Number(Number::I64(n)));
-                Ok(())
+            fn string(&mut self, s: &str) {
+                self.out.set(Value::String(s.to_owned()));
             }
 
-            fn nonnegative(&mut self, n: u64) -> Result<()> {
-                self.out = Some(Value::Number(Number::U64(n)));
-                Ok(())
+            fn negative(&mut self, n: i64) {
+                self.out.set(Value::Number(Number::I64(n)));
             }
 
-            fn float(&mut self, n: f64) -> Result<()> {
-                self.out = Some(Value::Number(Number::F64(n)));
-                Ok(())
+            fn nonnegative(&mut self, n: u64) {
+                self.out.set(Value::Number(Number::U64(n)));
             }
 
-            fn seq(&mut self) -> Result<Box<dyn Seq + '_>> {
-                Ok(Box::new(ArrayBuilder {
+            fn float(&mut self, n: f64) {
+                self.out.set(Value::Number(Number::F64(n)));
+            }
+
+            fn seq(&mut self) -> Option<Box<dyn Seq<Self::Error> + '_>> {
+                Some(Box::new(ArrayBuilder {
                     out: &mut self.out,
                     array: Array::new(),
-                    element: None,
+                    element: Cell::Empty,
                 }))
             }
 
-            fn map(&mut self) -> Result<Box<dyn Map + '_>> {
-                Ok(Box::new(ObjectBuilder {
+            fn map(&mut self) -> Option<Box<dyn Map<Self::Error> + '_>> {
+                Some(Box::new(ObjectBuilder {
                     out: &mut self.out,
                     object: Object::new(),
-                    key: None,
-                    value: None,
+                    key: Cell::Empty,
+                    value: Cell::Empty,
                 }))
             }
         }
 
-        struct ArrayBuilder<'a> {
-            out: &'a mut Option<Value>,
+        struct ArrayBuilder<'a, E> {
+            out: &'a mut Cell<Value, E>,
             array: Array,
-            element: Option<Value>,
+            element: Cell<Value, E>,
         }
 
-        impl<'a> ArrayBuilder<'a> {
+        impl<'a, E> ArrayBuilder<'a, E> {
             fn shift(&mut self) {
-                if let Some(e) = self.element.take() {
+                if let Cell::Ok(e) = self.element.take() {
                     self.array.push(e);
                 }
             }
         }
 
-        impl<'a> Seq for ArrayBuilder<'a> {
-            fn element(&mut self) -> Result<&mut dyn Visitor> {
+        impl<'a, E: VisitorError> Seq<E> for ArrayBuilder<'a, E> {
+            fn element(&mut self) -> Result<&mut dyn Visitor<Error = E>> {
                 self.shift();
                 Ok(Deserialize::begin(&mut self.element))
             }
 
             fn finish(&mut self) -> Result<()> {
                 self.shift();
-                *self.out = Some(Value::Array(mem::replace(&mut self.array, Array::new())));
+                self.out
+                    .set(Value::Array(mem::replace(&mut self.array, Array::new())));
                 Ok(())
             }
         }
 
-        struct ObjectBuilder<'a> {
-            out: &'a mut Option<Value>,
+        struct ObjectBuilder<'a, E> {
+            out: &'a mut Cell<Value, E>,
             object: Object,
-            key: Option<String>,
-            value: Option<Value>,
+            key: Cell<String, E>,
+            value: Cell<Value, E>,
         }
 
-        impl<'a> ObjectBuilder<'a> {
+        impl<'a, E> ObjectBuilder<'a, E> {
             fn shift(&mut self) {
-                if let (Some(k), Some(v)) = (self.key.take(), self.value.take()) {
+                if let (Cell::Ok(k), Cell::Ok(v)) = (self.key.take(), self.value.take()) {
                     self.object.insert(k, v);
                 }
             }
         }
 
-        impl<'a> Map for ObjectBuilder<'a> {
-            fn key(&mut self, k: &str) -> Result<&mut dyn Visitor> {
+        impl<'a, E: VisitorError> Map<E> for ObjectBuilder<'a, E> {
+            fn key(&mut self, k: &str) -> Result<&mut dyn Visitor<Error = E>> {
                 self.shift();
-                self.key = Some(k.to_owned());
+                self.key = Cell::Ok(k.to_owned());
                 Ok(Deserialize::begin(&mut self.value))
             }
 
             fn finish(&mut self) -> Result<()> {
                 self.shift();
-                *self.out = Some(Value::Object(mem::replace(&mut self.object, Object::new())));
+                *self.out = Cell::Ok(Value::Object(mem::replace(&mut self.object, Object::new())));
                 Ok(())
             }
         }
