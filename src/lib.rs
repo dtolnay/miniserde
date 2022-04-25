@@ -153,6 +153,7 @@
     clippy::enum_glob_use,
     clippy::let_underscore_drop,
     clippy::missing_errors_doc,
+    clippy::module_name_repetitions,
     clippy::must_use_candidate,
     clippy::redundant_else,
     clippy::shadow_unrelated,
