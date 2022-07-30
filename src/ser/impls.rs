@@ -11,6 +11,8 @@ use core::str;
 use std::collections::{hash_map, HashMap};
 #[cfg(feature = "std")]
 use std::hash::{BuildHasher, Hash};
+#[cfg(feature = "std")]
+use std::path::PathBuf;
 
 impl Serialize for () {
     fn begin(&self) -> Fragment {
@@ -197,5 +199,12 @@ impl private {
         }
 
         Fragment::Map(Box::new(BTreeMapStream(map.iter())))
+    }
+}
+
+#[cfg(feature = "std")]
+impl Serialize for PathBuf {
+    fn begin(&self) -> Fragment {
+        Fragment::Str(self.to_string_lossy())
     }
 }
