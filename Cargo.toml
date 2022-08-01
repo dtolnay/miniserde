@@ -2,13 +2,13 @@
 name = "miniserde"
 version = "0.1.24"
 authors = ["David Tolnay <dtolnay@gmail.com>"]
-license = "MIT OR Apache-2.0"
 description = "Data structure serialization library with several opposite design goals from Serde."
-repository = "https://github.com/dtolnay/miniserde"
 documentation = "https://docs.rs/miniserde"
-readme = "README.md"
-exclude = ["benches"]
 edition = "2018"
+exclude = ["benches"]
+license = "MIT OR Apache-2.0"
+readme = "README.md"
+repository = "https://github.com/dtolnay/miniserde"
 rust-version = "1.36"
 
 [dependencies]
