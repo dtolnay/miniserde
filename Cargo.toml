@@ -2,6 +2,7 @@
 name = "miniserde"
 version = "0.1.24"
 authors = ["David Tolnay <dtolnay@gmail.com>"]
+categories = ["encoding", "no-std"]
 description = "Data structure serialization library with several opposite design goals from Serde."
 documentation = "https://docs.rs/miniserde"
 edition = "2018"
