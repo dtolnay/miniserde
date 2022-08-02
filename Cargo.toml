@@ -7,6 +7,7 @@ description = "Data structure serialization library with several opposite design
 documentation = "https://docs.rs/miniserde"
 edition = "2018"
 exclude = ["benches"]
+keywords = ["serde", "serialization"]
 license = "MIT OR Apache-2.0"
 readme = "README.md"
 repository = "https://github.com/dtolnay/miniserde"
