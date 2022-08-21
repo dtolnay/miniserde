@@ -1,4 +1,6 @@
 use crate::json::{drop, Value};
+use crate::private;
+use crate::ser::{Fragment, Serialize};
 use alloc::vec::Vec;
 use core::iter::FromIterator;
 use core::mem::ManuallyDrop;
@@ -77,5 +79,11 @@ impl FromIterator<Value> for Array {
         Array {
             inner: Vec::from_iter(iter),
         }
+    }
+}
+
+impl Serialize for Array {
+    fn begin(&self) -> Fragment {
+        private::stream_slice(self)
     }
 }

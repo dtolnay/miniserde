@@ -53,7 +53,7 @@ impl Serialize for Value {
             Value::Number(Number::I64(n)) => Fragment::I64(*n),
             Value::Number(Number::F64(n)) => Fragment::F64(*n),
             Value::String(s) => Fragment::Str(Cow::Borrowed(s)),
-            Value::Array(array) => private::stream_slice(array),
+            Value::Array(array) => Serialize::begin(array),
             Value::Object(object) => private::stream_object(object),
         }
     }
