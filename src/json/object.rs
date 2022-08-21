@@ -1,5 +1,8 @@
+use crate::de::{Deserialize, Map, Visitor};
+use crate::error::Result;
 use crate::json::{drop, Value};
 use crate::ser::{self, Fragment, Serialize};
+use crate::Place;
 use alloc::borrow::Cow;
 use alloc::boxed::Box;
 use alloc::collections::{btree_map, BTreeMap};
@@ -101,5 +104,51 @@ impl Serialize for Object {
         }
 
         Fragment::Map(Box::new(ObjectIter(self.iter())))
+    }
+}
+
+impl Deserialize for Object {
+    fn begin(out: &mut Option<Self>) -> &mut dyn Visitor {
+        impl Visitor for Place<Object> {
+            fn map(&mut self) -> Result<Box<dyn Map + '_>> {
+                Ok(Box::new(ObjectBuilder {
+                    out: &mut self.out,
+                    object: Object::new(),
+                    key: None,
+                    value: None,
+                }))
+            }
+        }
+
+        struct ObjectBuilder<'a> {
+            out: &'a mut Option<Object>,
+            object: Object,
+            key: Option<String>,
+            value: Option<Value>,
+        }
+
+        impl<'a> ObjectBuilder<'a> {
+            fn shift(&mut self) {
+                if let (Some(k), Some(v)) = (self.key.take(), self.value.take()) {
+                    self.object.insert(k, v);
+                }
+            }
+        }
+
+        impl<'a> Map for ObjectBuilder<'a> {
+            fn key(&mut self, k: &str) -> Result<&mut dyn Visitor> {
+                self.shift();
+                self.key = Some(k.to_owned());
+                Ok(Deserialize::begin(&mut self.value))
+            }
+
+            fn finish(&mut self) -> Result<()> {
+                self.shift();
+                *self.out = Some(mem::replace(&mut self.object, Object::new()));
+                Ok(())
+            }
+        }
+
+        Place::new(out)
     }
 }
