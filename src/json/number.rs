@@ -15,9 +15,9 @@ pub enum Number {
 impl Display for Number {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Number::U64(n) => Display::fmt(n, formatter),
-            Number::I64(n) => Display::fmt(n, formatter),
-            Number::F64(n) => Display::fmt(n, formatter),
+            Number::U64(n) => formatter.write_str(itoa::Buffer::new().format(*n)),
+            Number::I64(n) => formatter.write_str(itoa::Buffer::new().format(*n)),
+            Number::F64(n) => formatter.write_str(ryu::Buffer::new().format(*n)),
         }
     }
 }
