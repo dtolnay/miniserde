@@ -6,6 +6,7 @@ use crate::Place;
 use alloc::borrow::{Cow, ToOwned};
 use alloc::boxed::Box;
 use alloc::string::String;
+use core::fmt::{self, Debug};
 use core::mem;
 use core::str;
 
@@ -26,7 +27,7 @@ use core::str;
 /// }
 /// // no stack overflow when `value` goes out of scope
 /// ```
-#[derive(Clone, Debug)]
+#[derive(Clone)]
 pub enum Value {
     Null,
     Bool(bool),
@@ -40,6 +41,19 @@ impl Default for Value {
     /// The default value is null.
     fn default() -> Self {
         Value::Null
+    }
+}
+
+impl Debug for Value {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Value::Null => formatter.write_str("Null"),
+            Value::Bool(boolean) => write!(formatter, "Bool({})", boolean),
+            Value::Number(number) => write!(formatter, "Number({})", number),
+            Value::String(string) => write!(formatter, "String({:?})", string),
+            Value::Array(array) => Debug::fmt(array, formatter),
+            Value::Object(object) => Debug::fmt(object, formatter),
+        }
     }
 }
 

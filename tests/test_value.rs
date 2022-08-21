@@ -36,43 +36,17 @@ fn test_debug() {
     let debug = format!("{:#?}", value);
 
     let expected = indoc! {r#"
-        Object(
-            Object {
-                inner: {
-                    "Array": Array(
-                        Array {
-                            inner: [
-                                Bool(
-                                    true,
-                                ),
-                            ],
-                        },
-                    ),
-                    "Bool": Bool(
-                        true,
-                    ),
-                    "EmptyArray": Array(
-                        Array {
-                            inner: [],
-                        },
-                    ),
-                    "EmptyObject": Object(
-                        Object {
-                            inner: {},
-                        },
-                    ),
-                    "Null": Null,
-                    "Number": Number(
-                        U64(
-                            1,
-                        ),
-                    ),
-                    "String": String(
-                        "...",
-                    ),
-                },
-            },
-        )"#
+        Object {
+            "Array": Array [
+                Bool(true),
+            ],
+            "Bool": Bool(true),
+            "EmptyArray": Array [],
+            "EmptyObject": Object {},
+            "Null": Null,
+            "Number": Number(1),
+            "String": String("..."),
+        }"#
     };
 
     assert_eq!(debug, expected);

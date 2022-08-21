@@ -6,13 +6,14 @@ use crate::ser::{Fragment, Serialize};
 use crate::Place;
 use alloc::boxed::Box;
 use alloc::vec::Vec;
+use core::fmt::{self, Debug};
 use core::iter::FromIterator;
 use core::mem::{self, ManuallyDrop};
 use core::ops::{Deref, DerefMut};
 use core::ptr;
 
 /// A `Vec<Value>` with a non-recursive drop impl.
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Default)]
 pub struct Array {
     inner: Vec<Value>,
 }
@@ -83,6 +84,13 @@ impl FromIterator<Value> for Array {
         Array {
             inner: Vec::from_iter(iter),
         }
+    }
+}
+
+impl Debug for Array {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        formatter.write_str("Array ")?;
+        formatter.debug_list().entries(self).finish()
     }
 }
 

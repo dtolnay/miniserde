@@ -7,6 +7,7 @@ use alloc::borrow::{Cow, ToOwned};
 use alloc::boxed::Box;
 use alloc::collections::{btree_map, BTreeMap};
 use alloc::string::String;
+use core::fmt::{self, Debug};
 use core::iter::FromIterator;
 use core::mem::{self, ManuallyDrop};
 use core::ops::{Deref, DerefMut};
@@ -14,7 +15,7 @@ use core::ptr;
 use core::str;
 
 /// A `BTreeMap<String, Value>` with a non-recursive drop impl.
-#[derive(Clone, Debug, Default)]
+#[derive(Clone, Default)]
 pub struct Object {
     inner: BTreeMap<String, Value>,
 }
@@ -89,6 +90,13 @@ impl FromIterator<(String, Value)> for Object {
         Object {
             inner: BTreeMap::from_iter(iter),
         }
+    }
+}
+
+impl Debug for Object {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        formatter.write_str("Object ")?;
+        formatter.debug_map().entries(self).finish()
     }
 }
 
