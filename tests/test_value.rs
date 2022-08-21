@@ -32,7 +32,7 @@ fn test_debug() {
         }
     "#;
 
-    let value: Value = json::from_str(&j).unwrap();
+    let value: Value = json::from_str(j).unwrap();
     let debug = format!("{:#?}", value);
 
     let expected = indoc! {r#"
