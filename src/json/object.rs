@@ -1,5 +1,4 @@
 use crate::json::{drop, Value};
-use crate::private;
 use crate::ser::{self, Fragment, Serialize};
 use alloc::borrow::Cow;
 use alloc::boxed::Box;
@@ -90,8 +89,8 @@ impl FromIterator<(String, Value)> for Object {
     }
 }
 
-impl private {
-    pub fn stream_object(object: &Object) -> Fragment {
+impl Serialize for Object {
+    fn begin(&self) -> Fragment {
         struct ObjectIter<'a>(btree_map::Iter<'a, String, Value>);
 
         impl<'a> ser::Map for ObjectIter<'a> {
@@ -101,6 +100,6 @@ impl private {
             }
         }
 
-        Fragment::Map(Box::new(ObjectIter(object.iter())))
+        Fragment::Map(Box::new(ObjectIter(self.iter())))
     }
 }
