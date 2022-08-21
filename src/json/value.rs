@@ -1,7 +1,6 @@
 use crate::de::{Deserialize, Map, Seq, Visitor};
 use crate::error::Result;
 use crate::json::{Array, Number, Object};
-use crate::private;
 use crate::ser::{Fragment, Serialize};
 use crate::Place;
 use alloc::borrow::{Cow, ToOwned};
@@ -49,12 +48,10 @@ impl Serialize for Value {
         match self {
             Value::Null => Fragment::Null,
             Value::Bool(b) => Fragment::Bool(*b),
-            Value::Number(Number::U64(n)) => Fragment::U64(*n),
-            Value::Number(Number::I64(n)) => Fragment::I64(*n),
-            Value::Number(Number::F64(n)) => Fragment::F64(*n),
+            Value::Number(number) => Serialize::begin(number),
             Value::String(s) => Fragment::Str(Cow::Borrowed(s)),
-            Value::Array(array) => private::stream_slice(array),
-            Value::Object(object) => private::stream_object(object),
+            Value::Array(array) => Serialize::begin(array),
+            Value::Object(object) => Serialize::begin(object),
         }
     }
 }
