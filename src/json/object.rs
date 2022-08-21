@@ -3,7 +3,7 @@ use crate::error::Result;
 use crate::json::{drop, Value};
 use crate::ser::{self, Fragment, Serialize};
 use crate::Place;
-use alloc::borrow::Cow;
+use alloc::borrow::{Cow, ToOwned};
 use alloc::boxed::Box;
 use alloc::collections::{btree_map, BTreeMap};
 use alloc::string::String;

@@ -4,6 +4,7 @@ use crate::json::{drop, Value};
 use crate::private;
 use crate::ser::{Fragment, Serialize};
 use crate::Place;
+use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::iter::FromIterator;
 use core::mem::{self, ManuallyDrop};
