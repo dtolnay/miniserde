@@ -30,7 +30,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: dtolnay/rust-toolchain@1.36.0
-      - run: cargo test --doc
+      - run: cargo check
 
   minimal:
     name: Minimal versions
