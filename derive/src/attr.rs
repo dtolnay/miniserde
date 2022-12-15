@@ -1,33 +1,26 @@
-use syn::{Attribute, Error, Field, Lit, Meta, NestedMeta, Result, Variant};
+use syn::{Attribute, Field, LitStr, Result, Variant};
 
 /// Find the value of a #[serde(rename = "...")] attribute.
 fn attr_rename(attrs: &[Attribute]) -> Result<Option<String>> {
     let mut rename = None;
 
     for attr in attrs {
-        if !attr.path.is_ident("serde") {
+        if !attr.path().is_ident("serde") {
             continue;
         }
 
-        let list = match attr.parse_meta()? {
-            Meta::List(list) => list,
-            other => return Err(Error::new_spanned(other, "unsupported attribute")),
-        };
-
-        for meta in &list.nested {
-            if let NestedMeta::Meta(Meta::NameValue(value)) = meta {
-                if value.path.is_ident("rename") {
-                    if let Lit::Str(s) = &value.lit {
-                        if rename.is_some() {
-                            return Err(Error::new_spanned(meta, "duplicate rename attribute"));
-                        }
-                        rename = Some(s.value());
-                        continue;
-                    }
+        attr.parse_nested_meta(|meta| {
+            if meta.path.is_ident("rename") {
+                let s: LitStr = meta.value()?.parse()?;
+                if rename.is_some() {
+                    return Err(meta.error("duplicate rename attribute"));
                 }
+                rename = Some(s.value());
+                Ok(())
+            } else {
+                Err(meta.error("unsupported attribute"))
             }
-            return Err(Error::new_spanned(meta, "unsupported attribute"));
-        }
+        })?;
     }
 
     Ok(rename)

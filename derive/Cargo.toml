@@ -7,7 +7,7 @@ documentation = "https://docs.rs/miniserde"
 edition = "2018"
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/dtolnay/miniserde"
-rust-version = "1.36"
+rust-version = "1.56"
 
 [lib]
 proc-macro = true
@@ -15,7 +15,7 @@ proc-macro = true
 [dependencies]
 proc-macro2 = "1.0"
 quote = "1.0.2"
-syn = "1.0"
+syn = "2.0"
 
 [package.metadata.docs.rs]
 targets = ["x86_64-unknown-linux-gnu"]

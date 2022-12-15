@@ -10,7 +10,7 @@ exclude = ["benches"]
 keywords = ["serde", "serialization"]
 license = "MIT OR Apache-2.0"
 repository = "https://github.com/dtolnay/miniserde"
-rust-version = "1.36"
+rust-version = "1.56"
 
 [dependencies]
 itoa = "1.0"
