@@ -4,7 +4,7 @@ Miniserde
 [<img alt="github" src="https://img.shields.io/badge/github-dtolnay/miniserde-8da0cb?style=for-the-badge&labelColor=555555&logo=github" height="20">](https://github.com/dtolnay/miniserde)
 [<img alt="crates.io" src="https://img.shields.io/crates/v/miniserde.svg?style=for-the-badge&color=fc8d62&logo=rust" height="20">](https://crates.io/crates/miniserde)
 [<img alt="docs.rs" src="https://img.shields.io/badge/docs.rs-miniserde-66c2a5?style=for-the-badge&labelColor=555555&logo=docs.rs" height="20">](https://docs.rs/miniserde)
-[<img alt="build status" src="https://img.shields.io/github/workflow/status/dtolnay/miniserde/CI/master?style=for-the-badge" height="20">](https://github.com/dtolnay/miniserde/actions?query=branch%3Amaster)
+[<img alt="build status" src="https://img.shields.io/github/actions/workflow/status/dtolnay/miniserde/ci.yml?branch=master&style=for-the-badge" height="20">](https://github.com/dtolnay/miniserde/actions?query=branch%3Amaster)
 
 *Prototype of a data structure serialization library with several opposite
 design goals from [Serde](https://serde.rs).*
