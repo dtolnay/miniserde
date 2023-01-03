@@ -29,6 +29,9 @@ trybuild = { version = "1.0.49", features = ["diff"] }
 [workspace]
 members = ["derive", "tests/crate"]
 
+[lib]
+doc-scrape-examples = false
+
 [package.metadata.docs.rs]
 targets = ["x86_64-unknown-linux-gnu"]
 
