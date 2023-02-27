@@ -151,6 +151,7 @@
     clippy::checked_conversions,
     clippy::doc_markdown,
     clippy::enum_glob_use,
+    clippy::let_underscore_untyped,
     clippy::missing_errors_doc,
     clippy::module_name_repetitions,
     clippy::must_use_candidate,
