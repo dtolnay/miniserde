@@ -625,7 +625,7 @@ impl<'a, 'b> Deserializer<'a, 'b> {
 fn f64_from_parts(nonnegative: bool, significand: u64, mut exponent: i32) -> Result<f64> {
     let mut f = significand as f64;
     loop {
-        match POW10.get(exponent.abs() as usize) {
+        match POW10.get(exponent.unsigned_abs() as usize) {
             Some(&pow) => {
                 if exponent >= 0 {
                     f *= pow;
