@@ -387,7 +387,7 @@ impl<T: Deserialize> Deserialize for Vec<T> {
 
             fn finish(&mut self) -> Result<()> {
                 self.shift();
-                *self.out = Some(mem::replace(&mut self.vec, Vec::new()));
+                *self.out = Some(mem::take(&mut self.vec));
                 Ok(())
             }
         }
@@ -502,7 +502,7 @@ impl<K: FromStr + Ord, V: Deserialize> Deserialize for BTreeMap<K, V> {
 
             fn finish(&mut self) -> Result<()> {
                 self.shift();
-                *self.out = Some(mem::replace(&mut self.map, BTreeMap::new()));
+                *self.out = Some(mem::take(&mut self.map));
                 Ok(())
             }
         }

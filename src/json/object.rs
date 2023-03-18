@@ -22,7 +22,7 @@ pub struct Object {
 
 impl Drop for Object {
     fn drop(&mut self) {
-        for (_, child) in mem::replace(&mut self.inner, BTreeMap::new()) {
+        for (_, child) in mem::take(&mut self.inner) {
             drop::safely(child);
         }
     }
