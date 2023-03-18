@@ -155,6 +155,7 @@
     clippy::missing_errors_doc,
     clippy::module_name_repetitions,
     clippy::must_use_candidate,
+    clippy::ptr_as_ptr,
     clippy::redundant_else,
     clippy::shadow_unrelated,
     clippy::single_match_else,
