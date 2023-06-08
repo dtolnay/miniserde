@@ -1,5 +1,10 @@
 error: unsupported attribute
  --> tests/ui/attr-unsupported.rs:5:13
   |
+3 | #[derive(Serialize)]
+  |          --------- in this derive macro expansion
+4 | struct Struct {
 5 |     #[serde(skip)]
   |             ^^^^
+  |
+  = note: this error originates in the derive macro `Serialize` (in Nightly builds, run with -Z macro-backtrace for more info)
