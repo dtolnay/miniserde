@@ -8,7 +8,6 @@ use alloc::boxed::Box;
 use alloc::collections::{btree_map, BTreeMap};
 use alloc::string::String;
 use core::fmt::{self, Debug};
-use core::iter::FromIterator;
 use core::mem::{self, ManuallyDrop};
 use core::ops::{Deref, DerefMut};
 use core::ptr;
