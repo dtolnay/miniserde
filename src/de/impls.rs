@@ -8,7 +8,8 @@ use alloc::boxed::Box;
 use alloc::collections::BTreeMap;
 use alloc::string::String;
 use alloc::vec::Vec;
-use core::mem::{self, ManuallyDrop};
+use core::mem::{self, ManuallyDrop, MaybeUninit};
+use core::ptr;
 use core::str::{self, FromStr};
 #[cfg(feature = "std")]
 use std::collections::HashMap;
@@ -389,6 +390,70 @@ impl<T: Deserialize> Deserialize for Vec<T> {
                 self.shift();
                 *self.out = Some(mem::take(&mut self.vec));
                 Ok(())
+            }
+        }
+
+        Place::new(out)
+    }
+}
+
+impl<T: Deserialize, const N: usize> Deserialize for [T; N] {
+    fn begin(out: &mut Option<Self>) -> &mut dyn Visitor {
+        impl<T: Deserialize, const N: usize> Visitor for Place<[T; N]> {
+            fn seq(&mut self) -> Result<Box<dyn Seq + '_>> {
+                Ok(Box::new(ArrayBuilder {
+                    out: &mut self.out,
+                    array: unsafe { MaybeUninit::<[MaybeUninit<T>; N]>::uninit().assume_init() },
+                    len: 0,
+                    element: None,
+                }))
+            }
+        }
+
+        struct ArrayBuilder<'a, T: 'a, const N: usize> {
+            out: &'a mut Option<[T; N]>,
+            array: [MaybeUninit<T>; N],
+            len: usize,
+            element: Option<T>,
+        }
+
+        impl<'a, T, const N: usize> ArrayBuilder<'a, T, N> {
+            fn shift(&mut self) -> Result<()> {
+                if let Some(e) = self.element.take() {
+                    self.array.get_mut(self.len).ok_or(Error)?.write(e);
+                    self.len += 1;
+                }
+                Ok(())
+            }
+        }
+
+        impl<'a, T: Deserialize, const N: usize> Seq for ArrayBuilder<'a, T, N> {
+            fn element(&mut self) -> Result<&mut dyn Visitor> {
+                self.shift()?;
+                Ok(Deserialize::begin(&mut self.element))
+            }
+
+            fn finish(&mut self) -> Result<()> {
+                self.shift()?;
+                if self.len < N {
+                    return Err(Error);
+                }
+                // First drop any array that is already in the Place. This way
+                // we can atomically move self.array into it and reset self.len
+                // to 0, without the possibility of a panic between those two
+                // steps.
+                *self.out = None;
+                *self.out = Some(unsafe { ptr::addr_of_mut!(self.array).cast::<[T; N]>().read() });
+                self.len = 0;
+                Ok(())
+            }
+        }
+
+        impl<'a, T: 'a, const N: usize> Drop for ArrayBuilder<'a, T, N> {
+            fn drop(&mut self) {
+                for element in &mut self.array[..self.len] {
+                    unsafe { ptr::drop_in_place(element.assume_init_mut()) };
+                }
             }
         }
 
