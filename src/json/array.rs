@@ -12,7 +12,7 @@ use core::ops::{Deref, DerefMut};
 use core::ptr;
 
 /// A `Vec<Value>` with a non-recursive drop impl.
-#[derive(Clone, Default)]
+#[derive(Default)]
 pub struct Array {
     inner: Vec<Value>,
 }
@@ -45,6 +45,18 @@ impl Deref for Array {
 impl DerefMut for Array {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.inner
+    }
+}
+
+impl Clone for Array {
+    fn clone(&self) -> Self {
+        Array {
+            inner: self.inner.clone(),
+        }
+    }
+
+    fn clone_from(&mut self, other: &Self) {
+        self.inner.clone_from(&other.inner);
     }
 }
 
