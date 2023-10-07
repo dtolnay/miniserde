@@ -123,7 +123,7 @@ fn from_str_impl(j: &str, visitor: &mut dyn Visitor) -> Result<()> {
                     de.bump();
                     break;
                 }
-                close @ b']' | close @ b'}' => {
+                close @ (b']' | b'}') => {
                     de.bump();
                     match &mut layer {
                         Layer::Seq(seq) if close == b']' => seq.finish()?,
@@ -367,7 +367,7 @@ impl<'a, 'b> Deserializer<'a, 'b> {
     fn parse_whitespace(&mut self) -> Option<u8> {
         loop {
             match self.peek() {
-                Some(b' ') | Some(b'\n') | Some(b'\t') | Some(b'\r') => {
+                Some(b' ' | b'\n' | b'\t' | b'\r') => {
                     self.bump();
                 }
                 other => {
