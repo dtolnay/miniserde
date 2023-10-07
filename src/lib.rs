@@ -141,6 +141,7 @@
     clippy::checked_conversions,
     clippy::doc_markdown,
     clippy::enum_glob_use,
+    clippy::into_iter_without_iter, // https://github.com/rust-lang/rust-clippy/issues/11635
     clippy::let_underscore_untyped,
     clippy::manual_range_contains,
     clippy::missing_errors_doc,
