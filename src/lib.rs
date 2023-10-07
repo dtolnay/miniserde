@@ -136,30 +136,25 @@
 
 #![doc(html_root_url = "https://docs.rs/miniserde/0.1.34")]
 #![allow(
-    clippy::needless_doctest_main,
-    clippy::vec_init_then_push,
-    // Regression causing false positives:
-    // https://github.com/rust-lang/rust-clippy/issues/5343
-    clippy::useless_transmute,
-    // Clippy bug: https://github.com/rust-lang/rust-clippy/issues/5704
-    clippy::unnested_or_patterns,
-    // We support older compilers.
-    clippy::manual_range_contains,
-    // Pedantic.
     clippy::cast_possible_wrap,
     clippy::cast_precision_loss,
     clippy::checked_conversions,
     clippy::doc_markdown,
     clippy::enum_glob_use,
     clippy::let_underscore_untyped,
+    clippy::manual_range_contains,
     clippy::missing_errors_doc,
     clippy::module_name_repetitions,
     clippy::must_use_candidate,
+    clippy::needless_doctest_main,
     clippy::ptr_as_ptr,
     clippy::redundant_else,
     clippy::shadow_unrelated,
     clippy::single_match_else,
     clippy::too_many_lines,
+    clippy::unnested_or_patterns, // https://github.com/rust-lang/rust-clippy/issues/5704
+    clippy::useless_transmute, // https://github.com/rust-lang/rust-clippy/issues/5343
+    clippy::vec_init_then_push,
 )]
 #![cfg_attr(not(feature = "std"), no_std)]
 
