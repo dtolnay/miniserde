@@ -5,7 +5,8 @@ use std::f64;
 fn test_ser() {
     let cases = &[
         (1.0, "1.0"),
-        (f64::NAN, "null"),
+        (f64::NAN.copysign(1.0), "null"),
+        (f64::NAN.copysign(-1.0), "null"),
         (f64::INFINITY, "null"),
         (f64::NEG_INFINITY, "null"),
     ];
