@@ -1,21 +1,17 @@
 use crate::de::{Map, Seq, Visitor};
 use crate::error::Result;
 use alloc::boxed::Box;
+use core::ptr;
 
 impl dyn Visitor {
     pub fn ignore() -> &'static mut dyn Visitor {
         static mut IGNORE: Ignore = Ignore;
-        unsafe { &mut IGNORE }
-        //
-        // The following may be needed if stacked borrows gets more selective
-        // about the above in the future:
-        //
-        //     unsafe { &mut *ptr::addr_of_mut!(IGNORE) }
-        //
+
         // Conceptually we have an array of type [Ignore; ∞] in a static, which
         // is zero sized, and each caller of `fn ignore` gets a unique one of
         // them, as if by `&mut *ptr::addr_of_mut!(IGNORE[i++])` for some
         // appropriately synchronized i.
+        unsafe { &mut *ptr::addr_of_mut!(IGNORE) }
     }
 }
 
