@@ -156,9 +156,12 @@
     clippy::useless_transmute, // https://github.com/rust-lang/rust-clippy/issues/5343
     clippy::vec_init_then_push,
 )]
-#![cfg_attr(not(feature = "std"), no_std)]
+#![no_std]
 
 extern crate alloc;
+
+#[cfg(feature = "std")]
+extern crate std;
 
 #[doc(hidden)]
 pub use mini_internal::*;
