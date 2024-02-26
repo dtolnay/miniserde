@@ -1,7 +1,6 @@
 use crate::de::{Deserialize, Visitor};
 use crate::error::Result;
 use crate::ser::{Fragment, Serialize};
-use crate::Place;
 use core::fmt::{self, Display};
 
 /// A JSON number represented by some Rust primitive.
@@ -34,6 +33,8 @@ impl Serialize for Number {
 
 impl Deserialize for Number {
     fn begin(out: &mut Option<Self>) -> &mut dyn Visitor {
+        make_place!(Place);
+
         impl Visitor for Place<Number> {
             fn negative(&mut self, n: i64) -> Result<()> {
                 self.out = Some(Number::I64(n));

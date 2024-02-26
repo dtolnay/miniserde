@@ -3,7 +3,6 @@ use crate::error::Result;
 use crate::json::{drop, Value};
 use crate::private;
 use crate::ser::{Fragment, Serialize};
-use crate::Place;
 use alloc::boxed::Box;
 use alloc::vec::Vec;
 use core::fmt::{self, Debug};
@@ -113,6 +112,8 @@ impl Serialize for Array {
 
 impl Deserialize for Array {
     fn begin(out: &mut Option<Self>) -> &mut dyn Visitor {
+        make_place!(Place);
+
         impl Visitor for Place<Array> {
             fn seq(&mut self) -> Result<Box<dyn Seq + '_>> {
                 Ok(Box::new(ArrayBuilder {
