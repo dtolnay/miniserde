@@ -2,7 +2,7 @@ use crate::{attr, bound};
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::{
-    parse_quote, Data, DataEnum, DataStruct, DeriveInput, Error, Fields, FieldsNamed, Ident, Result,
+    parse_quote, Data, DataEnum, DataStruct, DeriveInput, Error, Fields, FieldsNamed, Result,
 };
 
 pub fn derive(input: DeriveInput) -> Result<TokenStream> {
@@ -26,10 +26,6 @@ pub fn derive(input: DeriveInput) -> Result<TokenStream> {
 fn derive_struct(input: &DeriveInput, fields: &FieldsNamed) -> Result<TokenStream> {
     let ident = &input.ident;
     let (impl_generics, ty_generics, where_clause) = input.generics.split_for_impl();
-    let dummy = Ident::new(
-        &format!("_IMPL_MINISERIALIZE_FOR_{}", ident),
-        Span::call_site(),
-    );
 
     let fieldname = &fields.named.iter().map(|f| &f.ident).collect::<Vec<_>>();
     let fieldstr = fields
@@ -46,7 +42,7 @@ fn derive_struct(input: &DeriveInput, fields: &FieldsNamed) -> Result<TokenStrea
 
     Ok(quote! {
         #[allow(non_upper_case_globals)]
-        const #dummy: () = {
+        const _: () = {
             impl #impl_generics miniserde::Serialize for #ident #ty_generics #bounded_where_clause {
                 fn begin(&self) -> miniserde::ser::Fragment {
                     miniserde::ser::Fragment::Map(miniserde::__private::Box::new(__Map {
@@ -89,10 +85,6 @@ fn derive_enum(input: &DeriveInput, enumeration: &DataEnum) -> Result<TokenStrea
     }
 
     let ident = &input.ident;
-    let dummy = Ident::new(
-        &format!("_IMPL_MINISERIALIZE_FOR_{}", ident),
-        Span::call_site(),
-    );
 
     let var_idents = enumeration
         .variants
@@ -113,7 +105,7 @@ fn derive_enum(input: &DeriveInput, enumeration: &DataEnum) -> Result<TokenStrea
 
     Ok(quote! {
         #[allow(non_upper_case_globals)]
-        const #dummy: () = {
+        const _: () = {
             impl miniserde::Serialize for #ident {
                 fn begin(&self) -> miniserde::ser::Fragment {
                     match self {
