@@ -2,7 +2,6 @@ use crate::de::{Deserialize, Map, Seq, Visitor};
 use crate::error::Result;
 use crate::json::{Array, Number, Object};
 use crate::ser::{Fragment, Serialize};
-use crate::Place;
 use alloc::borrow::{Cow, ToOwned};
 use alloc::boxed::Box;
 use alloc::string::String;
@@ -72,6 +71,8 @@ impl Serialize for Value {
 
 impl Deserialize for Value {
     fn begin(out: &mut Option<Self>) -> &mut dyn Visitor {
+        make_place!(Place);
+
         impl Visitor for Place<Value> {
             fn null(&mut self) -> Result<()> {
                 self.out = Some(Value::Null);

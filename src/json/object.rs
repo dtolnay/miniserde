@@ -2,7 +2,6 @@ use crate::de::{Deserialize, Map, Visitor};
 use crate::error::Result;
 use crate::json::{drop, Value};
 use crate::ser::{self, Fragment, Serialize};
-use crate::Place;
 use alloc::borrow::{Cow, ToOwned};
 use alloc::boxed::Box;
 use alloc::collections::{btree_map, BTreeMap};
@@ -116,6 +115,8 @@ impl Serialize for Object {
 
 impl Deserialize for Object {
     fn begin(out: &mut Option<Self>) -> &mut dyn Visitor {
+        make_place!(Place);
+
         impl Visitor for Place<Object> {
             fn map(&mut self) -> Result<Box<dyn Map + '_>> {
                 Ok(Box::new(ObjectBuilder {
