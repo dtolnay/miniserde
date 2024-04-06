@@ -414,7 +414,7 @@ impl<'a, 'b> Deserializer<'a, 'b> {
                             // We need to be careful with overflow. If we can, try to keep the
                             // number as a `u64` until we grow too large. At that point, switch to
                             // parsing the value as a `f64`.
-                            if overflow!(res * 10 + digit, u64::max_value()) {
+                            if overflow!(res * 10 + digit, u64::MAX) {
                                 return self
                                     .parse_long_integer(
                                         nonnegative,
@@ -498,7 +498,7 @@ impl<'a, 'b> Deserializer<'a, 'b> {
             let digit = u64::from(c - b'0');
             at_least_one_digit = true;
 
-            if overflow!(significand * 10 + digit, u64::max_value()) {
+            if overflow!(significand * 10 + digit, u64::MAX) {
                 // The next multiply/add would overflow, so just ignore all
                 // further digits.
                 while let b'0'..=b'9' = self.peek_or_nul() {
@@ -553,7 +553,7 @@ impl<'a, 'b> Deserializer<'a, 'b> {
             self.bump();
             let digit = i32::from(c - b'0');
 
-            if overflow!(exp * 10 + digit, i32::max_value()) {
+            if overflow!(exp * 10 + digit, i32::MAX) {
                 return self.parse_exponent_overflow(nonnegative, significand, positive_exp);
             }
 

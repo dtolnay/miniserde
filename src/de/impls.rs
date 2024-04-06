@@ -68,7 +68,7 @@ macro_rules! signed {
 
                 impl Visitor for Place<$ty> {
                     fn negative(&mut self, n: i64) -> Result<()> {
-                        if n >= $ty::min_value() as i64 {
+                        if n >= $ty::MIN as i64 {
                             self.out = Some(n as $ty);
                             Ok(())
                         } else {
@@ -77,7 +77,7 @@ macro_rules! signed {
                     }
 
                     fn nonnegative(&mut self, n: u64) -> Result<()> {
-                        if n <= $ty::max_value() as u64 {
+                        if n <= $ty::MAX as u64 {
                             self.out = Some(n as $ty);
                             Ok(())
                         } else {
@@ -105,7 +105,7 @@ macro_rules! unsigned {
 
                 impl Visitor for Place<$ty> {
                     fn nonnegative(&mut self, n: u64) -> Result<()> {
-                        if n <= $ty::max_value() as u64 {
+                        if n <= $ty::MAX as u64 {
                             self.out = Some(n as $ty);
                             Ok(())
                         } else {
