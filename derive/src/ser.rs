@@ -41,7 +41,7 @@ fn derive_struct(input: &DeriveInput, fields: &FieldsNamed) -> Result<TokenStrea
     let bounded_where_clause = bound::where_clause_with_bound(&input.generics, bound);
 
     Ok(quote! {
-        #[allow(non_upper_case_globals)]
+        #[allow(deprecated, non_upper_case_globals)]
         const _: () = {
             impl #impl_generics miniserde::Serialize for #ident #ty_generics #bounded_where_clause {
                 fn begin(&self) -> miniserde::ser::Fragment {
@@ -104,7 +104,7 @@ fn derive_enum(input: &DeriveInput, enumeration: &DataEnum) -> Result<TokenStrea
         .collect::<Result<Vec<_>>>()?;
 
     Ok(quote! {
-        #[allow(non_upper_case_globals)]
+        #[allow(deprecated, non_upper_case_globals)]
         const _: () = {
             impl miniserde::Serialize for #ident {
                 fn begin(&self) -> miniserde::ser::Fragment {
