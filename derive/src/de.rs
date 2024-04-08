@@ -41,7 +41,7 @@ pub fn derive_struct(input: &DeriveInput, fields: &FieldsNamed) -> Result<TokenS
     let bounded_where_clause = bound::where_clause_with_bound(&input.generics, bound);
 
     Ok(quote! {
-        #[allow(non_upper_case_globals)]
+        #[allow(deprecated, non_upper_case_globals)]
         const _: () = {
             #[repr(C)]
             struct __Visitor #impl_generics #where_clause {
@@ -132,7 +132,7 @@ pub fn derive_enum(input: &DeriveInput, enumeration: &DataEnum) -> Result<TokenS
         .collect::<Result<Vec<_>>>()?;
 
     Ok(quote! {
-        #[allow(non_upper_case_globals)]
+        #[allow(deprecated, non_upper_case_globals)]
         const _: () = {
             #[repr(C)]
             struct __Visitor {
