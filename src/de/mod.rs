@@ -88,7 +88,7 @@
 //!
 //! impl<'a, T: Deserialize> Seq for VecBuilder<'a, T> {
 //!     fn element(&mut self) -> Result<&mut dyn Visitor> {
-//!         // Free up the place by transfering the most recent element
+//!         // Free up the place by transferring the most recent element
 //!         // into self.vec.
 //!         self.vec.extend(self.element.take());
 //!         // Hand out a place to write the next element.
