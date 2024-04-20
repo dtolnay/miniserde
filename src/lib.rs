@@ -137,6 +137,7 @@
 #![doc(html_root_url = "https://docs.rs/miniserde/0.1.39")]
 #![allow(
     clippy::cast_lossless,
+    clippy::cast_possible_truncation,
     clippy::cast_possible_wrap,
     clippy::cast_precision_loss,
     clippy::checked_conversions,
