@@ -78,19 +78,28 @@ macro_rules! float {
 float!(f32);
 float!(f64);
 
-impl<'a, T: ?Sized + Serialize> Serialize for &'a T {
+impl<'a, T> Serialize for &'a T
+where
+    T: ?Sized + Serialize,
+{
     fn begin(&self) -> Fragment {
         (**self).begin()
     }
 }
 
-impl<T: ?Sized + Serialize> Serialize for Box<T> {
+impl<T> Serialize for Box<T>
+where
+    T: ?Sized + Serialize,
+{
     fn begin(&self) -> Fragment {
         (**self).begin()
     }
 }
 
-impl<T: Serialize> Serialize for Option<T> {
+impl<T> Serialize for Option<T>
+where
+    T: Serialize,
+{
     fn begin(&self) -> Fragment {
         match self {
             Some(some) => some.begin(),
@@ -99,13 +108,20 @@ impl<T: Serialize> Serialize for Option<T> {
     }
 }
 
-impl<'a, T: ?Sized + ToOwned + Serialize> Serialize for Cow<'a, T> {
+impl<'a, T> Serialize for Cow<'a, T>
+where
+    T: ?Sized + ToOwned + Serialize,
+{
     fn begin(&self) -> Fragment {
         (**self).begin()
     }
 }
 
-impl<A: Serialize, B: Serialize> Serialize for (A, B) {
+impl<A, B> Serialize for (A, B)
+where
+    A: Serialize,
+    B: Serialize,
+{
     fn begin(&self) -> Fragment {
         struct TupleStream<'a> {
             first: &'a dyn Serialize,
@@ -133,19 +149,28 @@ impl<A: Serialize, B: Serialize> Serialize for (A, B) {
     }
 }
 
-impl<T: Serialize> Serialize for [T] {
+impl<T> Serialize for [T]
+where
+    T: Serialize,
+{
     fn begin(&self) -> Fragment {
         private::stream_slice(self)
     }
 }
 
-impl<T: Serialize, const N: usize> Serialize for [T; N] {
+impl<T, const N: usize> Serialize for [T; N]
+where
+    T: Serialize,
+{
     fn begin(&self) -> Fragment {
         private::stream_slice(self)
     }
 }
 
-impl<T: Serialize> Serialize for Vec<T> {
+impl<T> Serialize for Vec<T>
+where
+    T: Serialize,
+{
     fn begin(&self) -> Fragment {
         private::stream_slice(self)
     }
@@ -161,7 +186,11 @@ where
     fn begin(&self) -> Fragment {
         struct HashMapStream<'a, K: 'a, V: 'a>(hash_map::Iter<'a, K, V>);
 
-        impl<'a, K: ToString, V: Serialize> Map for HashMapStream<'a, K, V> {
+        impl<'a, K, V> Map for HashMapStream<'a, K, V>
+        where
+            K: ToString,
+            V: Serialize,
+        {
             fn next(&mut self) -> Option<(Cow<str>, &dyn Serialize)> {
                 let (k, v) = self.0.next()?;
                 Some((Cow::Owned(k.to_string()), v as &dyn Serialize))
@@ -172,17 +201,27 @@ where
     }
 }
 
-impl<K: ToString, V: Serialize> Serialize for BTreeMap<K, V> {
+impl<K, V> Serialize for BTreeMap<K, V>
+where
+    K: ToString,
+    V: Serialize,
+{
     fn begin(&self) -> Fragment {
         private::stream_btree_map(self)
     }
 }
 
 impl private {
-    pub fn stream_slice<T: Serialize>(slice: &[T]) -> Fragment {
+    pub fn stream_slice<T>(slice: &[T]) -> Fragment
+    where
+        T: Serialize,
+    {
         struct SliceStream<'a, T: 'a>(slice::Iter<'a, T>);
 
-        impl<'a, T: Serialize> Seq for SliceStream<'a, T> {
+        impl<'a, T> Seq for SliceStream<'a, T>
+        where
+            T: Serialize,
+        {
             fn next(&mut self) -> Option<&dyn Serialize> {
                 let element = self.0.next()?;
                 Some(element)
@@ -192,10 +231,21 @@ impl private {
         Fragment::Seq(Box::new(SliceStream(slice.iter())))
     }
 
-    pub fn stream_btree_map<K: ToString, V: Serialize>(map: &BTreeMap<K, V>) -> Fragment {
-        struct BTreeMapStream<'a, K: 'a, V: 'a>(btree_map::Iter<'a, K, V>);
+    pub fn stream_btree_map<K, V>(map: &BTreeMap<K, V>) -> Fragment
+    where
+        K: ToString,
+        V: Serialize,
+    {
+        struct BTreeMapStream<'a, K, V>(btree_map::Iter<'a, K, V>)
+        where
+            K: 'a,
+            V: 'a;
 
-        impl<'a, K: ToString, V: Serialize> Map for BTreeMapStream<'a, K, V> {
+        impl<'a, K, V> Map for BTreeMapStream<'a, K, V>
+        where
+            K: ToString,
+            V: Serialize,
+        {
             fn next(&mut self) -> Option<(Cow<str>, &dyn Serialize)> {
                 let (k, v) = self.0.next()?;
                 Some((Cow::Owned(k.to_string()), v as &dyn Serialize))

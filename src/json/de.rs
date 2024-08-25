@@ -27,7 +27,10 @@ use core::str;
 ///     Ok(())
 /// }
 /// ```
-pub fn from_str<T: Deserialize>(j: &str) -> Result<T> {
+pub fn from_str<T>(j: &str) -> Result<T>
+where
+    T: Deserialize,
+{
     let mut out = None;
     from_str_impl(j, T::begin(&mut out))?;
     out.ok_or(Error)

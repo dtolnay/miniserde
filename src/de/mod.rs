@@ -67,7 +67,10 @@
 //!
 //! struct MyVec<T>(Vec<T>);
 //!
-//! impl<T: Deserialize> Visitor for Place<MyVec<T>> {
+//! impl<T> Visitor for Place<MyVec<T>>
+//! where
+//!     T: Deserialize,
+//! {
 //!     fn seq(&mut self) -> Result<Box<dyn Seq + '_>> {
 //!         Ok(Box::new(VecBuilder {
 //!             out: &mut self.out,
@@ -86,7 +89,10 @@
 //!     element: Option<T>,
 //! }
 //!
-//! impl<'a, T: Deserialize> Seq for VecBuilder<'a, T> {
+//! impl<'a, T> Seq for VecBuilder<'a, T>
+//! where
+//!     T: Deserialize,
+//! {
 //!     fn element(&mut self) -> Result<&mut dyn Visitor> {
 //!         // Free up the place by transferring the most recent element
 //!         // into self.vec.
@@ -105,7 +111,10 @@
 //!     }
 //! }
 //!
-//! impl<T: Deserialize> Deserialize for MyVec<T> {
+//! impl<T> Deserialize for MyVec<T>
+//! where
+//!     T: Deserialize,
+//! {
 //!     fn begin(out: &mut Option<Self>) -> &mut dyn Visitor {
 //!         // As mentioned, all Deserialize impls will look like this.
 //!         Place::new(out)
