@@ -25,7 +25,10 @@ use alloc::vec::Vec;
 ///     println!("{}", j);
 /// }
 /// ```
-pub fn to_string<T: ?Sized + Serialize>(value: &T) -> String {
+pub fn to_string<T>(value: &T) -> String
+where
+    T: ?Sized + Serialize,
+{
     to_string_impl(&value)
 }
 

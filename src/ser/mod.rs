@@ -26,7 +26,10 @@
 //! // Some custom sequence type that we want to serialize.
 //! struct MyVec<T>(Vec<T>);
 //!
-//! impl<T: Serialize> Serialize for MyVec<T> {
+//! impl<T> Serialize for MyVec<T>
+//! where
+//!     T: Serialize,
+//! {
 //!     fn begin(&self) -> Fragment {
 //!         Fragment::Seq(Box::new(SliceStream { iter: self.0.iter() }))
 //!     }
@@ -36,7 +39,10 @@
 //!     iter: std::slice::Iter<'a, T>,
 //! }
 //!
-//! impl<'a, T: Serialize> Seq for SliceStream<'a, T> {
+//! impl<'a, T> Seq for SliceStream<'a, T>
+//! where
+//!     T: Serialize,
+//! {
 //!     fn next(&mut self) -> Option<&dyn Serialize> {
 //!         let element = self.iter.next()?;
 //!         Some(element)
