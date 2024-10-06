@@ -150,6 +150,7 @@
     clippy::module_name_repetitions,
     clippy::must_use_candidate,
     clippy::needless_doctest_main,
+    clippy::needless_lifetimes,
     clippy::ptr_as_ptr,
     clippy::redundant_else,
     clippy::shadow_unrelated,
