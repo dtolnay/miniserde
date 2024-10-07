@@ -78,7 +78,7 @@ macro_rules! float {
 float!(f32);
 float!(f64);
 
-impl<'a, T> Serialize for &'a T
+impl<T> Serialize for &T
 where
     T: ?Sized + Serialize,
 {
