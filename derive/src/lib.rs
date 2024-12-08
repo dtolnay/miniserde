@@ -9,6 +9,7 @@ extern crate proc_macro;
 mod attr;
 mod bound;
 mod de;
+mod fallback;
 mod ser;
 
 use proc_macro::TokenStream;
@@ -17,15 +18,11 @@ use syn::{parse_macro_input, DeriveInput};
 #[proc_macro_derive(Serialize, attributes(serde))]
 pub fn derive_serialize(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
-    ser::derive(&input)
-        .unwrap_or_else(|err| err.to_compile_error())
-        .into()
+    ser::derive(&input).into()
 }
 
 #[proc_macro_derive(Deserialize, attributes(serde))]
 pub fn derive_deserialize(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
-    de::derive(&input)
-        .unwrap_or_else(|err| err.to_compile_error())
-        .into()
+    de::derive(&input).into()
 }
