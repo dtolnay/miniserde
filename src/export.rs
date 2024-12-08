@@ -4,6 +4,8 @@
 pub use core::option::Option::{None, Some};
 #[doc(hidden)]
 pub use core::result::Result::{Err, Ok};
+#[doc(hidden)]
+pub use core::unreachable;
 
 #[doc(hidden)]
 pub type Box<T> = alloc::boxed::Box<T>;

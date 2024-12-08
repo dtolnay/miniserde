@@ -1,11 +1,21 @@
-use crate::{attr, bound};
+use crate::{attr, bound, fallback};
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::{
     parse_quote, Data, DataEnum, DataStruct, DeriveInput, Error, Fields, FieldsNamed, Result,
 };
 
-pub fn derive(input: &DeriveInput) -> Result<TokenStream> {
+pub fn derive(input: &DeriveInput) -> TokenStream {
+    match try_expand(input) {
+        Ok(expanded) => expanded,
+        // If there are invalid attributes in the input, expand to a Deserialize
+        // impl anyway to minimize spurious secondary errors in other code that
+        // deserializes this type.
+        Err(error) => fallback::de(input, error),
+    }
+}
+
+fn try_expand(input: &DeriveInput) -> Result<TokenStream> {
     match &input.data {
         Data::Struct(DataStruct {
             fields: Fields::Named(fields),
