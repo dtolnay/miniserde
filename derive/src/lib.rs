@@ -16,14 +16,16 @@ use syn::{parse_macro_input, DeriveInput};
 
 #[proc_macro_derive(Serialize, attributes(serde))]
 pub fn derive_serialize(input: TokenStream) -> TokenStream {
-    ser::derive(parse_macro_input!(input as DeriveInput))
+    let input = parse_macro_input!(input as DeriveInput);
+    ser::derive(&input)
         .unwrap_or_else(|err| err.to_compile_error())
         .into()
 }
 
 #[proc_macro_derive(Deserialize, attributes(serde))]
 pub fn derive_deserialize(input: TokenStream) -> TokenStream {
-    de::derive(parse_macro_input!(input as DeriveInput))
+    let input = parse_macro_input!(input as DeriveInput);
+    de::derive(&input)
         .unwrap_or_else(|err| err.to_compile_error())
         .into()
 }

@@ -5,13 +5,13 @@ use syn::{
     parse_quote, Data, DataEnum, DataStruct, DeriveInput, Error, Fields, FieldsNamed, Result,
 };
 
-pub fn derive(input: DeriveInput) -> Result<TokenStream> {
+pub fn derive(input: &DeriveInput) -> Result<TokenStream> {
     match &input.data {
         Data::Struct(DataStruct {
             fields: Fields::Named(fields),
             ..
-        }) => derive_struct(&input, fields),
-        Data::Enum(enumeration) => derive_enum(&input, enumeration),
+        }) => derive_struct(input, fields),
+        Data::Enum(enumeration) => derive_enum(input, enumeration),
         Data::Struct(_) => Err(Error::new(
             Span::call_site(),
             "currently only structs with named fields are supported",
