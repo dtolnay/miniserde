@@ -134,7 +134,7 @@
 //! restricts the kinds of on-the-fly manipulation that are possible in custom
 //! impls. If you need any of this, use Serde -- it's a great library.
 
-#![doc(html_root_url = "https://docs.rs/miniserde/0.1.40")]
+#![doc(html_root_url = "https://docs.rs/miniserde/0.1.41")]
 #![allow(
     clippy::cast_lossless,
     clippy::cast_possible_truncation,
