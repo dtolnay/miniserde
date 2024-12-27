@@ -319,7 +319,8 @@ impl<'a, 'b> Deserializer<'a, 'b> {
                             return Err(Error);
                         }
 
-                        let n = (u32::from(n1 - 0xD800) << 10 | u32::from(n2 - 0xDC00)) + 0x1_0000;
+                        let n =
+                            ((u32::from(n1 - 0xD800) << 10) | u32::from(n2 - 0xDC00)) + 0x1_0000;
 
                         match char::from_u32(n) {
                             Some(c) => c,
