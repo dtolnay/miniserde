@@ -132,7 +132,7 @@ fn from_str_impl(j: &str, visitor: &mut dyn Visitor) -> Result<()> {
                         Layer::Seq(seq) if close == b']' => seq.finish()?,
                         Layer::Map(map) if close == b'}' => map.finish()?,
                         _ => return Err(Error),
-                    };
+                    }
                     let frame = match de.stack.pop() {
                         Some(frame) => frame,
                         None => break 'outer,
