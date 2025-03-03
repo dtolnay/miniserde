@@ -142,6 +142,7 @@
     clippy::cast_precision_loss,
     clippy::checked_conversions,
     clippy::doc_markdown,
+    clippy::elidable_lifetime_names,
     clippy::enum_glob_use,
     clippy::into_iter_without_iter, // https://github.com/rust-lang/rust-clippy/issues/11635
     clippy::let_underscore_untyped,
