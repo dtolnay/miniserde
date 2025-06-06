@@ -160,6 +160,7 @@
     clippy::useless_transmute, // https://github.com/rust-lang/rust-clippy/issues/5343
     clippy::vec_init_then_push,
 )]
+#![allow(unknown_lints, mismatched_lifetime_syntaxes)]
 #![no_std]
 
 extern crate alloc;
