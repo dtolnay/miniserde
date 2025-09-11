@@ -1,3 +1,5 @@
+#![allow(clippy::uninlined_format_args)]
+
 use indoc::indoc;
 use miniserde::json::{self, Value};
 
