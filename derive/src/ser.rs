@@ -1,4 +1,4 @@
-use crate::{attr, bound, fallback};
+use crate::{attr, bound, fallback, private};
 use proc_macro2::{Span, TokenStream};
 use quote::quote;
 use syn::{
@@ -49,13 +49,14 @@ fn derive_struct(input: &DeriveInput, fields: &FieldsNamed) -> Result<TokenStrea
     let (wrapper_impl_generics, wrapper_ty_generics, _) = wrapper_generics.split_for_impl();
     let bound = parse_quote!(miniserde::Serialize);
     let bounded_where_clause = bound::where_clause_with_bound(&input.generics, bound);
+    let private2 = private;
 
     Ok(quote! {
         #[allow(deprecated, non_upper_case_globals)]
         const _: () = {
             impl #impl_generics miniserde::Serialize for #ident #ty_generics #bounded_where_clause {
                 fn begin(&self) -> miniserde::ser::Fragment {
-                    miniserde::ser::Fragment::Map(miniserde::__private::Box::new(__Map {
+                    miniserde::ser::Fragment::Map(miniserde::#private::Box::new(__Map {
                         data: self,
                         state: 0,
                     }))
@@ -64,21 +65,21 @@ fn derive_struct(input: &DeriveInput, fields: &FieldsNamed) -> Result<TokenStrea
 
             struct __Map #wrapper_impl_generics #where_clause {
                 data: &'__a #ident #ty_generics,
-                state: miniserde::__private::usize,
+                state: miniserde::#private::usize,
             }
 
             impl #wrapper_impl_generics miniserde::ser::Map for __Map #wrapper_ty_generics #bounded_where_clause {
-                fn next(&mut self) -> miniserde::__private::Option<(miniserde::__private::Cow<miniserde::__private::str>, &dyn miniserde::Serialize)> {
+                fn next(&mut self) -> miniserde::#private::Option<(miniserde::#private::Cow<miniserde::#private::str>, &dyn miniserde::Serialize)> {
                     let __state = self.state;
                     self.state = __state + 1;
                     match __state {
                         #(
-                            #index => miniserde::__private::Some((
-                                miniserde::__private::Cow::Borrowed(#fieldstr),
+                            #index => miniserde::#private2::Some((
+                                miniserde::#private2::Cow::Borrowed(#fieldstr),
                                 &self.data.#fieldname,
                             )),
                         )*
-                        _ => miniserde::__private::None,
+                        _ => miniserde::#private::None,
                     }
                 }
             }
@@ -112,6 +113,7 @@ fn derive_enum(input: &DeriveInput, enumeration: &DataEnum) -> Result<TokenStrea
         .iter()
         .map(attr::name_of_variant)
         .collect::<Result<Vec<_>>>()?;
+    let private2 = private;
 
     Ok(quote! {
         #[allow(deprecated, non_upper_case_globals)]
@@ -121,7 +123,7 @@ fn derive_enum(input: &DeriveInput, enumeration: &DataEnum) -> Result<TokenStrea
                     match self {
                         #(
                             #ident::#var_idents => {
-                                miniserde::ser::Fragment::Str(miniserde::__private::Cow::Borrowed(#names))
+                                miniserde::ser::Fragment::Str(miniserde::#private2::Cow::Borrowed(#names))
                             }
                         )*
                     }

@@ -178,16 +178,17 @@ pub use mini_internal::*;
 #[doc(hidden)]
 pub use mini_internal::{Deserialize as MiniDeserialize, Serialize as MiniSerialize};
 
-// Not public API.
-#[doc(hidden)]
-#[path = "export.rs"]
-pub mod __private;
+mod export;
+
+include!(concat!(env!("OUT_DIR"), "/private.rs"));
 
 #[macro_use]
 mod careful;
 
 #[macro_use]
-mod place;
+mod place {
+    include!(concat!(env!("OUT_DIR"), "/place.rs"));
+}
 
 mod error;
 mod ignore;
