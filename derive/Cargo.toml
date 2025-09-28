@@ -1,6 +1,6 @@
 [package]
 name = "mini-internal"
-version = "0.1.42"
+version = "0.1.43"
 authors = ["David Tolnay <dtolnay@gmail.com>"]
 description = "Derive macros for miniserde. Use the re-exports from the miniserde crate instead."
 documentation = "https://docs.rs/miniserde"
