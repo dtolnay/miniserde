@@ -11,6 +11,7 @@ pub mod __private$$ {
 ";
 
 fn main() {
+    println!("cargo:rerun-if-changed=src/place.rs");
     println!("cargo:rerun-if-changed=tests/regression");
 
     let out_dir = PathBuf::from(env::var_os("OUT_DIR").unwrap());
