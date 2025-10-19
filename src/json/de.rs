@@ -133,9 +133,8 @@ fn from_str_impl(j: &str, visitor: &mut dyn Visitor) -> Result<()> {
                         Layer::Map(map) if close == b'}' => map.finish()?,
                         _ => return Err(Error),
                     }
-                    let frame = match de.stack.pop() {
-                        Some(frame) => frame,
-                        None => break 'outer,
+                    let Some(frame) = de.stack.pop() else {
+                        break 'outer;
                     };
                     accept_comma = true;
                     visitor = frame.0;
@@ -595,9 +594,8 @@ impl<'a, 'b> Deserializer<'a, 'b> {
     }
 
     fn event(&mut self) -> Result<Event> {
-        let peek = match self.parse_whitespace() {
-            Some(b) => b,
-            None => return Err(Error),
+        let Some(peek) = self.parse_whitespace() else {
+            return Err(Error);
         };
         self.bump();
         match peek {
