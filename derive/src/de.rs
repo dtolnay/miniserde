@@ -63,9 +63,7 @@ pub fn derive_struct(input: &DeriveInput, fields: &FieldsNamed) -> Result<TokenS
                 fn begin(__out: &mut miniserde::#private::Option<Self>) -> &mut dyn miniserde::de::Visitor {
                     unsafe {
                         &mut *{
-                            __out
-                            as *mut miniserde::#private::Option<Self>
-                            as *mut __Visitor #ty_generics
+                            (__out as *mut miniserde::#private::Option<Self>).cast::<__Visitor #ty_generics>()
                         }
                     }
                 }
@@ -154,9 +152,7 @@ pub fn derive_enum(input: &DeriveInput, enumeration: &DataEnum) -> Result<TokenS
                 fn begin(__out: &mut miniserde::#private::Option<Self>) -> &mut dyn miniserde::de::Visitor {
                     unsafe {
                         &mut *{
-                            __out
-                            as *mut miniserde::#private::Option<Self>
-                            as *mut __Visitor
+                            (__out as *mut miniserde::#private::Option<Self>).cast::<__Visitor>()
                         }
                     }
                 }
