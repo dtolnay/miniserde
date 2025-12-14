@@ -62,9 +62,7 @@ pub fn derive_struct(input: &DeriveInput, fields: &FieldsNamed) -> Result<TokenS
             impl #impl_generics miniserde::Deserialize for #ident #ty_generics #bounded_where_clause {
                 fn begin(__out: &mut miniserde::#private::Option<Self>) -> &mut dyn miniserde::de::Visitor {
                     unsafe {
-                        &mut *{
-                            (__out as *mut miniserde::#private::Option<Self>).cast::<__Visitor #ty_generics>()
-                        }
+                        &mut *miniserde::#private::ptr::addr_of_mut!(*__out).cast::<__Visitor #ty_generics>()
                     }
                 }
             }
@@ -151,9 +149,7 @@ pub fn derive_enum(input: &DeriveInput, enumeration: &DataEnum) -> Result<TokenS
             impl miniserde::Deserialize for #ident {
                 fn begin(__out: &mut miniserde::#private::Option<Self>) -> &mut dyn miniserde::de::Visitor {
                     unsafe {
-                        &mut *{
-                            (__out as *mut miniserde::#private::Option<Self>).cast::<__Visitor>()
-                        }
+                        &mut *miniserde::#private::ptr::addr_of_mut!(*__out).cast::<__Visitor>()
                     }
                 }
             }
