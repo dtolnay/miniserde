@@ -1,11 +1,8 @@
-#![feature(test)]
 #![allow(clippy::struct_excessive_bools, clippy::struct_field_names)]
 
-extern crate test;
-
+use criterion::{criterion_group, criterion_main, Bencher, Criterion};
 use miniserde::{Deserialize as MiniDeserialize, Serialize as MiniSerialize};
 use serde_derive::{Deserialize, Serialize};
-use test::Bencher;
 
 fn input_json() -> String {
     std::fs::read_to_string("benches/twitter.json").unwrap()
@@ -16,7 +13,6 @@ fn input_struct() -> Twitter {
     serde_json::from_str(&j).unwrap()
 }
 
-#[bench]
 fn bench_deserialize_miniserde(b: &mut Bencher) {
     let j = input_json();
     b.iter(|| {
@@ -24,7 +20,6 @@ fn bench_deserialize_miniserde(b: &mut Bencher) {
     });
 }
 
-#[bench]
 fn bench_deserialize_serdejson(b: &mut Bencher) {
     let j = input_json();
     b.iter(|| {
@@ -32,7 +27,6 @@ fn bench_deserialize_serdejson(b: &mut Bencher) {
     });
 }
 
-#[bench]
 fn bench_serialize_miniserde(b: &mut Bencher) {
     let s = input_struct();
     b.iter(|| {
@@ -40,12 +34,23 @@ fn bench_serialize_miniserde(b: &mut Bencher) {
     });
 }
 
-#[bench]
 fn bench_serialize_serdejson(b: &mut Bencher) {
     let s = input_struct();
     b.iter(|| {
         serde_json::to_string(&s).unwrap();
     });
+}
+
+fn bench(c: &mut Criterion) {
+    let mut group = c.benchmark_group("deserialize");
+    group.bench_function("miniserde", bench_deserialize_miniserde);
+    group.bench_function("serde_json", bench_deserialize_serdejson);
+    group.finish();
+
+    let mut group = c.benchmark_group("serialize");
+    group.bench_function("miniserde", bench_serialize_miniserde);
+    group.bench_function("serde_json", bench_serialize_serdejson);
+    group.finish();
 }
 
 #[derive(Serialize, MiniSerialize, Deserialize, MiniDeserialize)]
@@ -227,3 +232,6 @@ struct SearchMetadata {
     since_id: u64,
     since_id_str: String,
 }
+
+criterion_group!(benches, bench);
+criterion_main!(benches);
