@@ -3,9 +3,9 @@
 #[doc(hidden)]
 pub use core::option::Option::{None, Some};
 #[doc(hidden)]
-pub use core::result::Result::{Err, Ok};
-#[doc(hidden)]
 pub use core::ptr;
+#[doc(hidden)]
+pub use core::result::Result::{Err, Ok};
 #[doc(hidden)]
 pub use core::unreachable;
 
