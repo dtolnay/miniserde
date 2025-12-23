@@ -15,7 +15,7 @@ rust-version = "1.68"
 [dependencies]
 itoa = "1.0"
 mini-internal = { version = "=0.1.43", path = "derive" }
-ryu = "1.0"
+zmij = "0.1.7"
 
 [dev-dependencies]
 automod = "1.0"
