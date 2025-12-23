@@ -16,7 +16,7 @@ impl Display for Number {
         match self {
             Number::U64(n) => formatter.write_str(itoa::Buffer::new().format(*n)),
             Number::I64(n) => formatter.write_str(itoa::Buffer::new().format(*n)),
-            Number::F64(n) => formatter.write_str(ryu::Buffer::new().format(*n)),
+            Number::F64(n) => formatter.write_str(zmij::Buffer::new().format(*n)),
         }
     }
 }

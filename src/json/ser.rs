@@ -64,7 +64,7 @@ fn to_string_impl(value: &dyn Serialize) -> String {
             Fragment::I64(n) => out.push_str(itoa::Buffer::new().format(n)),
             Fragment::F64(n) => {
                 if n.is_finite() {
-                    out.push_str(ryu::Buffer::new().format_finite(n));
+                    out.push_str(zmij::Buffer::new().format_finite(n));
                 } else {
                     out.push_str("null");
                 }
