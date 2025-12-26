@@ -18,6 +18,14 @@ struct Example {
     t2: Box<Tag>,
     t3: [Tag; 1],
     r#struct: Box<Nested>,
+    #[serde(default)]
+    m1: i32,
+    #[serde(default = "m2_default")]
+    m2: i32,
+}
+
+fn m2_default() -> i32 {
+    2
 }
 
 #[derive(PartialEq, Debug, Serialize, Deserialize)]
@@ -40,6 +48,8 @@ fn test_de() {
             y: Some(vec!["Y".to_owned(), "Y".to_owned()]),
             z: None,
         }),
+        m1: 0,
+        m2: 2,
     };
     assert_eq!(actual, expected);
 }
@@ -55,9 +65,10 @@ fn test_ser() {
             y: Some(vec!["Y".to_owned(), "Y".to_owned()]),
             z: None,
         }),
+        m1: 0,
+        m2: 2,
     };
     let actual = json::to_string(&example);
-    let expected =
-        r#"{"x":"X","t1":"A","t2":"renamedB","t3":["enum"],"struct":{"y":["Y","Y"],"z":null}}"#;
+    let expected = r#"{"x":"X","t1":"A","t2":"renamedB","t3":["enum"],"struct":{"y":["Y","Y"],"z":null},"m1":0,"m2":2}"#;
     assert_eq!(actual, expected);
 }
