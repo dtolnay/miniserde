@@ -19,8 +19,6 @@ qualified below.
 miniserde = "0.1"
 ```
 
-Version requirement: rustc 1.68+
-
 ### Example
 
 ```rust
