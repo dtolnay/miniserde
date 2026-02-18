@@ -44,6 +44,11 @@ pub fn derive_struct(input: &DeriveInput, fields: &FieldsNamed) -> Result<TokenS
         .iter()
         .map(attr::name_of_field)
         .collect::<Result<Vec<_>>>()?;
+    let fielddefault = fields
+        .named
+        .iter()
+        .map(attr::default_of_field)
+        .collect::<Result<Vec<_>>>()?;
 
     let wrapper_generics = bound::with_lifetime_bound(&input.generics, "'__a");
     let (wrapper_impl_generics, wrapper_ty_generics, _) = wrapper_generics.split_for_impl();
@@ -71,7 +76,7 @@ pub fn derive_struct(input: &DeriveInput, fields: &FieldsNamed) -> Result<TokenS
                 fn map(&mut self) -> miniserde::Result<miniserde::#private::Box<dyn miniserde::de::Map + '_>> {
                     Ok(miniserde::#private::Box::new(__State {
                         #(
-                            #fieldname: miniserde::Deserialize::default(),
+                            #fieldname: #fielddefault,
                         )*
                         __out: &mut self.__out,
                     }))
