@@ -1,5 +1,4 @@
 use miniserde::json;
-use std::f64;
 
 #[test]
 fn test_ser() {
