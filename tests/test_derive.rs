@@ -61,3 +61,20 @@ fn test_ser() {
         r#"{"x":"X","t1":"A","t2":"renamedB","t3":["enum"],"struct":{"y":["Y","Y"],"z":null}}"#;
     assert_eq!(actual, expected);
 }
+
+#[test]
+fn test_de_duplicate_field() {
+    let j = r#" {"y": null, "z": "Z", "z": "Z"} "#;
+    assert!(json::from_str::<Nested>(j).is_err());
+
+    let j = r#" {"y": null, "y": ["Y"]} "#;
+    assert!(json::from_str::<Nested>(j).is_err());
+
+    let j = r#" {"z": "Z"} "#;
+    let actual: Nested = json::from_str(j).unwrap();
+    let expected = Nested {
+        y: None,
+        z: Some("Z".to_owned()),
+    };
+    assert_eq!(actual, expected);
+}

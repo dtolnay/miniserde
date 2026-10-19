@@ -71,7 +71,7 @@ pub fn derive_struct(input: &DeriveInput, fields: &FieldsNamed) -> Result<TokenS
                 fn map(&mut self) -> miniserde::Result<miniserde::#private::Box<dyn miniserde::de::Map + '_>> {
                     Ok(miniserde::#private::Box::new(__State {
                         #(
-                            #fieldname: miniserde::Deserialize::default(),
+                            #fieldname: miniserde::#private2::None,
                         )*
                         __out: &mut self.__out,
                     }))
@@ -89,6 +89,7 @@ pub fn derive_struct(input: &DeriveInput, fields: &FieldsNamed) -> Result<TokenS
                 fn key(&mut self, __k: &miniserde::#private::str) -> miniserde::Result<&mut dyn miniserde::de::Visitor> {
                     match __k {
                         #(
+                            #fieldstr if self.#fieldname.is_some() => miniserde::#private2::Err(miniserde::Error),
                             #fieldstr => miniserde::#private2::Ok(miniserde::Deserialize::begin(&mut self.#fieldname)),
                         )*
                         _ => miniserde::#private::Ok(<dyn miniserde::de::Visitor>::ignore()),
@@ -97,7 +98,7 @@ pub fn derive_struct(input: &DeriveInput, fields: &FieldsNamed) -> Result<TokenS
 
                 fn finish(&mut self) -> miniserde::Result<()> {
                     #(
-                        let #fieldname = self.#fieldname.take().ok_or(miniserde::Error)?;
+                        let #fieldname = self.#fieldname.take().or_else(miniserde::Deserialize::default).ok_or(miniserde::Error)?;
                     )*
                     *self.__out = miniserde::#private::Some(#ident {
                         #(
